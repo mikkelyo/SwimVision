@@ -8,7 +8,7 @@ from xml.dom import minidom
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-
+#test
 #vi definerer enheden
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
