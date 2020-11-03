@@ -32,7 +32,7 @@ data_transforms = {
     ]),
 }
 
-data_dir = "D:/swimcamD/Classifier/cleandata"
+data_dir = "../../../SwimData/arucoOctober/classification"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
