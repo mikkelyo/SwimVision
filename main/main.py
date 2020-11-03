@@ -8,6 +8,7 @@ from torchvision import datasets, models, transforms
 from PIL import Image
 import random
 
+#hej med dig
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
