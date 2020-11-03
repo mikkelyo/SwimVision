@@ -109,7 +109,7 @@ def train(model,device,root,tran,batch_size=2,
          dataset_train, batch_size=batch_size, shuffle=True, num_workers=0,
          collate_fn=mincollate)
     
-    dataset_validation = SwimSet(os.path.join(root,"validation"),tran)
+    dataset_validation = SwimSet(os.path.join(root,"val"),tran)
     dataloader_validation = torch.utils.data.DataLoader(
         dataset_validation, batch_size=batch_size, shuffle=True, num_workers=0,
         collate_fn=mincollate)
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     
     tran = transforms.Compose([transforms.ToTensor()])
     
-    root = "D:/swimcamD/ObjectDetection/data"
+    root = "../../../SwimData/arucoOctober/objectDetection"
     
     train(model,device,root,tran)
     
