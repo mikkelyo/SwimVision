@@ -8,20 +8,19 @@ from torchvision import datasets, models, transforms
 from PIL import Image
 import random
 
-#hej med dig
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-staRCNN = torch.load("D:/swimcamD/ObjectDetection/models/11_12.311.pt",
+staRCNN = torch.load("../../../SwimData/arucoOctober/objectDetection/models/11_12.311.pt",
                    map_location=device)
 staRCNN.eval()
 
-WorldClassifier = torch.load("C:/Users/elleh/Documents/swimcam2/WorldClassifier.pt",
+WorldClassifier = torch.load("../../../SwimData/arucoOctober/classification/models/WorldClassifier.pt",
                              map_location=device)
 
 WorldClassifier.eval()
 
-os.chdir("D:/swimcamD/ObjectDetection/data/validation/images")
+os.chdir("../../../SwimData/arucoOctober/objectDetection/val/images")
 filelist = os.listdir()
 random.shuffle(filelist)
 
@@ -54,7 +53,8 @@ for i in range(13,len(filelist)):
         box_points = detection.detach().numpy()
         print(box_points)
         box_points = basisskifte @ np.array(box_points)
-        high_res = plt.imread("D:/swimcamD/1080/"+opdelinger[1] + "/1080_" + opdelinger[1]+"_"+opdelinger[2])
+        high_res = plt.imread("../../../SwimData/arucoOctober/classification/1080/"+
+                              opdelinger[1] + "/1080_" + opdelinger[1]+"_"+opdelinger[2])
         zoom = high_res[int(box_points[1]):int(box_points[3]),int(box_points[0]):int(box_points[2])]
         try:
             plt.imshow(np.array(imagePIL))
