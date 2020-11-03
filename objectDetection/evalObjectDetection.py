@@ -15,14 +15,14 @@ from trainfasterrcnn import imshow
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-model = torch.load("D:/swimcamD/ObjectDetection/models/11_12.311.pt",
+model = torch.load("../../../SwimData/arucoOctober/objectDetection/models/11_12.311.pt",
                    map_location=device)
 
 model.eval()
 
 tran = transforms.Compose([transforms.ToTensor()])
 
-dataset_validation = SwimSet("D:/swimcamD/ObjectDetection/data/validation",tran)
+dataset_validation = SwimSet("../../../SwimData/arucoOctober/objectDetection/val",tran)
 dataloader_validation = torch.utils.data.DataLoader(
  dataset_validation, batch_size=2, shuffle=True, num_workers=0,
  collate_fn=mincollate)
