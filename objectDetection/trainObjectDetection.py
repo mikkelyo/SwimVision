@@ -8,8 +8,8 @@ from xml.dom import minidom
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-#test
-#vi definerer enheden
+
+#vi definerer device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 class SwimSet(object):
