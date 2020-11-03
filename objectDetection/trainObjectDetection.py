@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 
-
 #vi definerer enheden
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -110,7 +109,7 @@ def train(model,device,root,tran,batch_size=2,
          dataset_train, batch_size=batch_size, shuffle=True, num_workers=0,
          collate_fn=mincollate)
     
-    dataset_validation = SwimSet(os.path.join(root,"val"),tran)
+    dataset_validation = SwimSet(os.path.join(root,"validation"),tran)
     dataloader_validation = torch.utils.data.DataLoader(
         dataset_validation, batch_size=batch_size, shuffle=True, num_workers=0,
         collate_fn=mincollate)
@@ -175,7 +174,7 @@ if __name__ == "__main__":
     
     tran = transforms.Compose([transforms.ToTensor()])
     
-    root = "../../../SwimData/arucoOctober/objectDetection"
+    root = "D:/swimcamD/ObjectDetection/data"
     
     train(model,device,root,tran)
     
