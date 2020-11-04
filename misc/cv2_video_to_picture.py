@@ -32,6 +32,7 @@ for video in files:
     success = True
     while success:
       # try:
+        # print(count)
         success,image = vidcap.read()
         if success == False:
             pass

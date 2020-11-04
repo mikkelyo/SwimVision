@@ -5,7 +5,6 @@ from torchvision import datasets, models, transforms
 import os
 from PIL import Image
 from xml.dom import minidom
-import utils
 import matplotlib.pyplot as plt
 import numpy as np
 import time 
