@@ -13,7 +13,7 @@ import os
 
 
 # Change folder
-os.chdir('/Users/MI/Documents/SwimData/SwimCodes/taggedVideos')
+os.chdir("../../../SwimData/Swimcodes/taggedVideos")
 
 files=[]
 for file in os.listdir():
