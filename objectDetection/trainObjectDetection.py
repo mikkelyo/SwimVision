@@ -138,8 +138,8 @@ def train(model,device,root,tran,batch_size=2,
                 optimizer.step()
                 totalLoss += loss.item()
                 
-                 #print something every ___ time
-                if i % 2 == 0:
+                 #print something every ___ batch
+                if i % 20 == 0:
                     print("\nloss pr batch: ",totalLoss/(i-1))
                     nu = time.time()
                     print("sek pr. batch: ",(nu-start)/(i-1))
@@ -149,17 +149,19 @@ def train(model,device,root,tran,batch_size=2,
         print("totalLoss for train: ",totalLoss)
         print("evaling ...\n")
         
-        #evaling
-        totalLoss = 0.0
-        for images, targets in dataloader_validation:
-            #only do something if batch is not empty
-            if images != None:
-                output = model(images,targets)
-                loss = output["loss_classifier"]+output["loss_box_reg"]
-                totalLoss += loss.item()
-        print("eval færdig")
-        print("totalLoss for eval: ",totalLoss)
-        print("\nepoke er færdig")
+        #evaling. We use torch.no_grad() to stop the program from crashing
+        with torch.no_grad():
+            totalLoss = 0.0
+            for images, targets in dataloader_validation:
+                #only do something if batch is not empty
+                if images != None:
+                    optimizer.zero_grad()
+                    output = model(images,targets)
+                    loss = output["loss_classifier"]+output["loss_box_reg"]
+                    totalLoss += loss.item()
+            print("eval færdig")
+            print("totalLoss for eval: ",totalLoss)
+            print("\nepoke er færdig")
         lr_scheduler.step()
         torch.save(model,os.path.join(root,"models")+"/"+str(epoch)+"_"+str(round(totalLoss,3))+".pt")
         
