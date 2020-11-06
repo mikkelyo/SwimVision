@@ -80,8 +80,8 @@ def mincollate(data):
     
     #handle images
     #Missing annotations -> ignore the batch
-    images = torch.zeros((batch_size,3,images_temp[0].shape[2],
-                                    images_temp[0].shape[1]))
+    images = torch.zeros((batch_size,3,images_temp[0].shape[1],
+                                    images_temp[0].shape[2]))
     for i in range(batch_size):
         images[i] = images_temp[i]
     images = images.to(device)
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     
     tran = transforms.Compose([transforms.ToTensor()])
     
-    root = "../../../SwimData/arucoOctober/objectDetection"
+    root = "../../../SwimData/SwimCodes/objectDetection"
     
     train(model,device,root,tran)
     
