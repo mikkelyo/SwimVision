@@ -9,7 +9,6 @@ import PIL
 import cv2
 import random
 from PIL import Image
-from cv2 import aruco
 
 
 class GauBlur(object):
