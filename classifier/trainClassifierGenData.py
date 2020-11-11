@@ -65,7 +65,7 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001)  # pause a bit so that plots are updated
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
+def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val_list=['train', 'val']):
 
     since = time.time()
 
@@ -77,7 +77,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         print('-' * 10)
 
         # Each epoch has a training and validation phase
-        for phase in ['train', 'val']:
+        for phase in train_val_list:
             if phase == 'train':
                 model.train()  # Set model to training mode
             else:
@@ -194,8 +194,12 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
 
 if __name__ == "__main__":
     print(model_conv)
+    
+    # Temp fix lyl
+    train_val_list = ['train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train', 'val']
+    
     model_conv = train_model(model_conv, criterion, optimizer_conv,
-                             exp_lr_scheduler, num_epochs=1500)
+                             exp_lr_scheduler, num_epochs=1500, train_val_list = train_val_list)
 
 
 

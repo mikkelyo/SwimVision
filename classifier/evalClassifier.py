@@ -70,7 +70,7 @@ def visualize_eval(model, num_images=6):
                 
         model.train(mode=was_training)
         
-def imshow(inp, title=None):
+def imshow_norm(inp, title=None):
     """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
     mean = np.array([0.485, 0.456, 0.406])
@@ -82,10 +82,22 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001) 
 
+def imshow(inp, title=None):
+    """Imshow for Tensor."""
+    inp = inp.numpy().transpose((1, 2, 0))
+    # mean = np.array([0.485, 0.456, 0.406])
+    # std = np.array([0.229, 0.224, 0.225])
+    # inp = std * inp + mean
+    inp = np.clip(inp, 0, 1)
+    plt.imshow(inp)
+    if title is not None:
+        plt.title(title)
+    plt.pause(0.001) 
+
 #model = torch.load("../../classifier/Cmodels/3.pt")
 model_conv = torchvision.models.vgg19(pretrained=False,progress=False)
 model_conv.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
-model_conv.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/0.pth"))
+model_conv.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification_genData/models/0batch.pth"))
 model_conv = model_conv.to(device)
 
 visualize_eval(model_conv,num_images=4)
