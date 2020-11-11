@@ -12,7 +12,7 @@ import random
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 #Define the object detector model as staRCNN
-staRCNN = torch.load("../../../SwimData/arucoOctober/objectDetection/models/11_12.311.pt",
+staRCNN = torch.load("../../../SwimData/SwimCodes/objectDetection/models/11_12.311.pt",
                    map_location=device)
 staRCNN.eval()
 

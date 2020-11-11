@@ -14,8 +14,8 @@ from cv2 import aruco
 
 class GauBlur(object):
     def __init__(self,p):
-        self.kernelsize = int(np.random.normal(27,5))
-        self.sd = abs(np.random.normal(7,2))
+        self.kernelsize = int(np.random.normal(27*2,5))
+        self.sd = abs(np.random.normal(7*1.2,2))
         self.p = p
         
     
@@ -27,34 +27,44 @@ class GauBlur(object):
             return slør
         else:
             return img
-
-class HoriBlur:
-    def __init__(self,p):
-        self.kernelsize = int(abs(np.random.normal(19,7)))
-        self.p = p
-    def __call__(self,img):
-        if random.random() < self.p:
-            kernel = np.zeros((self.kernelsize,self.kernelsize))
-            kernel[int((self.kernelsize-1)/2),:] = 1/5
-            slør = cv2.filter2D(np.array(img), -1, kernel)
-            slør = Image.fromarray(slør)
-            return slør
-        else:
-            return img
         
-class VertiBlur:
-    def __init__(self,p):
-        self.kernelsize = int(abs(np.random.normal(19,7)))
-        self.p = p
+class convert_to_rgb(object):
+    def __init__(self):
+        pass
+        # self.object.convert('RGB')
     def __call__(self,img):
-        if random.random() < self.p:
-            kernel = np.zeros((self.kernelsize,self.kernelsize))
-            kernel[:,int((self.kernelsize-1)/2)] = 1/5
-            slør = cv2.filter2D(np.array(img), -1, kernel)
-            slør = Image.fromarray(slør)
-            return slør
-        else:
-            return img
+        rgb_img = img.convert('RGB')
+        return rgb_img
+        
+
+
+# class HoriBlur:
+#     def __init__(self,p):
+#         self.kernelsize = int(abs(np.random.normal(19,7)))
+#         self.p = p
+#     def __call__(self,img):
+#         if random.random() < self.p:
+#             kernel = np.zeros((self.kernelsize,self.kernelsize))
+#             kernel[int((self.kernelsize-1)/2),:] = 1/5
+#             slør = cv2.filter2D(np.array(img), -1, kernel)
+#             slør = Image.fromarray(slør)
+#             return slør
+#         else:
+#             return img
+        
+# class VertiBlur:
+#     def __init__(self,p):
+#         self.kernelsize = int(abs(np.random.normal(19,7)))
+#         self.p = p
+#     def __call__(self,img):
+#         if random.random() < self.p:
+#             kernel = np.zeros((self.kernelsize,self.kernelsize))
+#             kernel[:,int((self.kernelsize-1)/2)] = 1/5
+#             slør = cv2.filter2D(np.array(img), -1, kernel)
+#             slør = Image.fromarray(slør)
+#             return slør
+#         else:
+#             return img
 
 
         
@@ -159,12 +169,12 @@ trans =  transforms.Compose([
         transforms.RandomHorizontalFlip()])
 
 trans2 = transforms.Compose([transforms.Resize((256,256)),
-                             GauBlur(0.7),
+                             GauBlur(1),
                              transforms.RandomRotation(180),
-                             transforms.RandomGrayscale(),
+                             # transforms.RandomGrayscale(),
                              transforms.RandomHorizontalFlip(),
                              transforms.RandomPerspective(p=0.8),
-                             BackGround(0.7,"../../background"),
+                             BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
                              GauBlur(0.5)
                              ])
 
@@ -188,23 +198,23 @@ data_transforms = {
     ]),
 }
 
-billed = PIL.Image.open("../../SwimCodes/SwimCode5.png")
-# aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_1000)
-# billed = cv2.aruco.drawMarker(aruco_dict, 500, 256, np.zeros((10,10)), 2)
-# print(billed.shape)
-# billed = Image.fromarray(billed)
-# billed = billed.convert("RGB")
-plt.imshow(billed)
-plt.show()
-nytbild = trans2(billed)
-plt.imshow(nytbild)
-plt.show()
-
-# background = Image.open("../../background.jpg")
-# background = background.resize((256,256))
-# plt.imshow(background)
+billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/A/SwimCode1_transparent.png")
+# # aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_1000)
+# # billed = cv2.aruco.drawMarker(aruco_dict, 500, 256, np.zeros((10,10)), 2)
+# # print(billed.shape)
+# # billed = Image.fromarray(billed)
+# # billed = billed.convert("RGB")
+# plt.imshow(billed)
 # plt.show()
-# plt.figure(figsize=(5,5))
+# nytbild = trans2(billed)
 # plt.imshow(nytbild)
-# plt.imshow(background,alpha=0.5)
 # plt.show()
+
+# # background = Image.open("../../background.jpg")
+# # background = background.resize((256,256))
+# # plt.imshow(background)
+# # plt.show()
+# # plt.figure(figsize=(5,5))
+# # plt.imshow(nytbild)
+# # plt.imshow(background,alpha=0.5)
+# # plt.show()
