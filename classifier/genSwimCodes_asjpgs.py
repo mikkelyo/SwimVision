@@ -127,23 +127,23 @@ trans2 = transforms.Compose([transforms.Resize((256,256)),
 
 #BackGround(0.9,"../../background")
 
-data_transforms = {
-    'train': transforms.Compose([
-        transforms.Resize((256,256)),
-        transforms.ColorJitter(brightness=0.1,contrast=0.1,saturation=0.5,hue=0.3),
-        transforms.RandomRotation(180),
-        transforms.RandomPerspective(p=0.1),
-        transforms.RandomGrayscale(),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ]),
-    'val': transforms.Compose([
-        transforms.Resize((256,256)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ]),
-}
+# data_transforms = {
+#     'train': transforms.Compose([
+#         transforms.Resize((256,256)),
+#         transforms.ColorJitter(brightness=0.1,contrast=0.1,saturation=0.5,hue=0.3),
+#         transforms.RandomRotation(180),
+#         transforms.RandomPerspective(p=0.1),
+#         transforms.RandomGrayscale(),
+#         transforms.RandomHorizontalFlip(),
+#         transforms.ToTensor(),
+#         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+#     ]),
+#     'val': transforms.Compose([
+#         transforms.Resize((256,256)),
+#         transforms.ToTensor(),
+#         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+#     ]),
+# }
 
 billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/B/SwimCode2_transparent.png")
 
