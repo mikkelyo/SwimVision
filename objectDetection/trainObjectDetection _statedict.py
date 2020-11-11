@@ -163,7 +163,7 @@ def train(model,device,root,tran,batch_size=2,
             print("totalLoss for eval: ",totalLoss)
             print("\nepoke er færdig")
         lr_scheduler.step()
-        torch.save(model.state_dict(),os.path.join(root,"models")+"/"+str(epoch)+"_"+str(round(totalLoss,3))+".pt")
+        torch.save(model.state_dict(),os.path.join(root,"models")+"/"+str(epoch)+"_"+str(round(totalLoss,3))+".pth")
         
 if __name__ == "__main__":
     
