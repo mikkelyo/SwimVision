@@ -15,7 +15,7 @@ import PIL
 import cv2
 import random
 from PIL import Image
-from genSwimCodes import GauBlur, BackGround, convert_to_rgb
+from genSwimCodes_asjpgs import GauBlur, BackGround, convert_to_rgb
 #%%
 # Data augmentation and normalization for training
 # Just normalization for validation
@@ -123,9 +123,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-                torch.save(model.state_dict(),"../../../classification/models/"+str(epoch)+'_'+str(epoch_acc)+".pth")
+                torch.save(model.state_dict(),"../../../Swimdata/SwimCodes/classification/models/"+
+                           str(epoch)+'_'+str(epoch_acc.item())+".pth")
 
-        print()
+        
 
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(
@@ -138,8 +139,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val
 
 def visualize_model(model, num_images=6):
     was_training = model.training
-    model.eval()
-    images_so_far = 0
+    model.eval()s
     fig = plt.figure()
 
     with torch.no_grad():
