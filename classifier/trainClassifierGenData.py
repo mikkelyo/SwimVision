@@ -65,7 +65,7 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001)  # pause a bit so that plots are updated
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val_list=['train', 'val']):
+def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
     since = time.time()
 
@@ -75,9 +75,11 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
-
+        
+        batch_count = 1
         # Each epoch has a training and validation phase
-        for phase in train_val_list:
+        for phase in ['train', 'val']:
+            print('Current phase:',phase)
             if phase == 'train':
                 model.train()  # Set model to training mode
             else:
@@ -95,11 +97,20 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val
                 optimizer.zero_grad()
                 # forward
                 # track history if only in train
+        
                 with torch.set_grad_enabled(phase == 'train'):
+                    # outputs from model
                     outputs = model(inputs)
-                    _, preds = torch.max(outputs, 1)
-                    loss = criterion(outputs, labels)
 
+                    # output with highest probability picked out
+                    _, preds = torch.max(outputs, 1)
+                    print('Predictions for batch of 32 inputs:',preds)
+                    
+                    
+                    # loss is calculated by comparing with labels
+                    loss = criterion(outputs, labels)
+                    print('Loss from',batch_count,'batch:',loss.item())
+                    
                     # backward + optimize only if in training phase
                     if phase == 'train':
                         loss.backward()
@@ -110,7 +121,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val
                 running_corrects += torch.sum(preds == labels.data)
                 # Saves per batch if you want immediate results
                 torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification_genData/models/"+str(epoch)+'batch'+".pth")
-
+                print('Batch',batch_count,'completed succesfully')
+                batch_count += 1
             if phase == 'train':
                 scheduler.step()
 
@@ -124,7 +136,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, train_val
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-                torch.save(model.state_dict(),"../../../classification/models/"+str(epoch)+'_'+str(epoch_acc)+".pth")
+                torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification_genData/models/"+str(epoch)+'_'+str(epoch_acc.item())+".pth")
 
         print()
 
@@ -195,11 +207,8 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
 if __name__ == "__main__":
     print(model_conv)
     
-    # Temp fix lyl
-    train_val_list = ['train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train','train', 'val']
-    
     model_conv = train_model(model_conv, criterion, optimizer_conv,
-                             exp_lr_scheduler, num_epochs=1500, train_val_list = train_val_list)
+                             exp_lr_scheduler, num_epochs=1500)
 
 
 
