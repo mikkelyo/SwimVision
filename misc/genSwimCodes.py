@@ -9,7 +9,6 @@ import PIL
 import cv2
 import random
 from PIL import Image
-from cv2 import aruco
 
 
 class GauBlur(object):
@@ -198,7 +197,7 @@ data_transforms = {
     ]),
 }
 
-billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/A/SwimCode1_transparent.png")
+#billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/A/SwimCode1_transparent.png")
 # # aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_1000)
 # # billed = cv2.aruco.drawMarker(aruco_dict, 500, 256, np.zeros((10,10)), 2)
 # # print(billed.shape)
