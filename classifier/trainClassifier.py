@@ -67,7 +67,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
-
+        batch_count = 1
         # Each epoch has a training and validation phase
         for phase in ['train','val']:
             if phase == 'train':
@@ -102,6 +102,9 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
+                if batch_count%50 ==0:
+                    print('Batch',batch_count,'completed succesfully')
+                batch_count += 1
             if phase == 'train':
                 scheduler.step()
 
@@ -118,7 +121,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 
                 print('Saving model...')
                 torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+
-                           str(epoch)+"_"+epoch_acc.item()+".pth")
+                           str(epoch)+"_"+str(epoch_acc.item())+".pth")
 
         print()
 

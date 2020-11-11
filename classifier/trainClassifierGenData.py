@@ -122,7 +122,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 # Saves per batch if you want immediate results
                 # print('Saving model...')
                 # torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification_genData/models/"+str(epoch)+'batch'+".pth")
-                print('Batch',batch_count,'completed succesfully')
+                if batch_count%50 ==0:
+                    print('Batch',batch_count,'completed succesfully')
                 batch_count += 1
             if phase == 'train':
                 scheduler.step()
