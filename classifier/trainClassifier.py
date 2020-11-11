@@ -32,7 +32,7 @@ data_transforms = {
     ]),
 }
 
-data_dir = "../../../SwimData/arucoOctober/classification"
+data_dir = "../../../SwimData/SwimCodes/classification"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
@@ -41,6 +41,7 @@ dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
               for x in ['train', 'val']}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
 class_names = image_datasets['train'].classes
+print(class_names)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -96,6 +97,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                     if phase == 'train':
                         loss.backward()
                         optimizer.step()
+                torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+str(epoch)+".pth")
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
@@ -113,7 +115,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-                torch.save(model,"../../classifier/Cmodels/"+str(epoch)+".pt")
+                torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+
+                           str(epoch)+"_"+epoch_acc+".pth")
 
         print()
 
@@ -158,7 +161,7 @@ def visualize_model(model, num_images=6):
 model_conv = torchvision.models.vgg19(pretrained=True,progress=False)
 
 print(model_conv)
-"""
+
 for param in model_conv.parameters():
     param.requires_grad = False
 
@@ -167,7 +170,7 @@ for param in model_conv.parameters():
 
 #num_ftrs = model_conv.classifier.in_features
 #model_conv.fc = nn.Linear(num_ftrs, 3)
-model_conv.classifier[6] = nn.Linear(in_features=4096,out_features=3,bias=True)
+model_conv.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
 
 
 
@@ -188,6 +191,6 @@ if __name__ == "__main__":
     model_conv = train_model(model_conv, criterion, optimizer_conv,
                              exp_lr_scheduler, num_epochs=1500)
 
-"""
+
 
 

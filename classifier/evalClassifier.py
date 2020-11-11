@@ -5,6 +5,7 @@ from torchvision import datasets, models, transforms
 import matplotlib.pyplot as plt
 import time
 import os
+import torch.nn as nn
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -28,7 +29,7 @@ data_transforms = {
 }
 
 
-data_dir = "F:/swimcam/classifier/cleandata"
+data_dir = "../../../SwimData/SwimCodes/classification"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
@@ -81,9 +82,13 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001) 
 
-model = torch.load("../../classifier/Cmodels/3.pt")
+#model = torch.load("../../classifier/Cmodels/3.pt")
+model_conv = torchvision.models.vgg19(pretrained=False,progress=False)
+model_conv.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
+model_conv.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/0.pth"))
+model_conv = model_conv.to(device)
 
-visualize_eval(model,num_images=4)
+visualize_eval(model_conv,num_images=4)
 
 #test inference time
 
