@@ -23,14 +23,14 @@ from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 # With this format, we train on generated data, and validate on real data.
 data_transforms = {
     'train': transforms.Compose([transforms.Resize((256,256)),
-                             # GauBlur(1),
-                             # transforms.RandomRotation(180),
+                             GauBlur(1),
+                             transforms.RandomRotation(180),
                              # transforms.RandomGrayscale(),
-                             # transforms.RandomHorizontalFlip(),
-                             # transforms.RandomPerspective(p=0.8),
-                             # BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
-                             # GauBlur(0.5),
-                             # convert_to_rgb(),
+                             transforms.RandomHorizontalFlip(),
+                             transforms.RandomPerspective(p=0.8),
+                             BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
+                             GauBlur(0.5),
+                             convert_to_rgb(),
                              transforms.ToTensor()
                              ]),
     
