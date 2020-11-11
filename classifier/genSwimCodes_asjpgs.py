@@ -114,7 +114,7 @@ class BackGround(object):
 #         transforms.RandomHorizontalFlip()])
 
 trans2 = transforms.Compose([transforms.Resize((256,256)),
-                              GauBlur(0.9),
+                              GauBlur(1),
                              transforms.RandomRotation(180),
                              # transforms.RandomGrayscale(),
                              transforms.RandomHorizontalFlip(),
@@ -145,12 +145,18 @@ trans2 = transforms.Compose([transforms.Resize((256,256)),
 #     ]),
 # }
 
-billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/B/SwimCode2_transparent.png")
 
-# plt.imshow$$
-nytbild = trans2(billed)
-plt.imshow(nytbild)
-plt.show()
+
+image = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/D/SwimCode4_transparent.png")
+
+for i in range(500):
+    gen_image = trans2(image)
+    gen_image = gen_image.convert('RGB')
+    # plt.imshow(gen_image)
+    # plt.show()
+    if i%50==0:
+        print(i,'images generated')
+    gen_image.save('/Users/MI/Documents/GitHub/SwimVision/classifier/generated_swimcodes/D/'+'D'+str(i)+'.jpg')
 
 
 
