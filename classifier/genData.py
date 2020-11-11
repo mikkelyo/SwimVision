@@ -5,7 +5,7 @@ import matplotlib
 import random
 import numpy as np
 #%%
-basedir = "D:/swimcamD/ObjectDetection/data/validation"
+basedir = "../../../SwimData/SwimCodes/objectDetection/train"
 
 framelist = os.listdir(basedir+"/images")
 annotlist = os.listdir(basedir+"/annotations")
@@ -16,28 +16,38 @@ for i in range(len(annotlist)):
     try:
         xmin = mydoc.getElementsByTagName('xmin')
         xmin = xmin[0].firstChild.data
-        xmin = int(int(xmin)/400*1920)
+        #xmin = int(int(xmin)/400*1920)
+        xmin = int(xmin)
         
         ymin = mydoc.getElementsByTagName('ymin')
         ymin = ymin[0].firstChild.data
-        ymin = int(int(ymin)/400*1080)
+        #ymin = int(int(ymin)/400*1080)
+        ymin = int(ymin)
         
         xmax = mydoc.getElementsByTagName('xmax')
         xmax = xmax[0].firstChild.data
-        xmax = int(int(xmax)/400*1920)
+        #xmax = int(int(xmax)/400*1920)
+        xmax = int(xmax)
         
         ymax = mydoc.getElementsByTagName('ymax')
         ymax = ymax[0].firstChild.data
-        ymax = int(int(ymax)/400*1080)
+        #ymax = int(int(ymax)/400*1080)
+        ymax = int(ymax)
         
-        klasse = annotlist[i].split("_")[1]
-        billed = plt.imread("D:/swimcamD/1080/"+klasse+"/"+
-                            "1080_"+klasse+"_"+annotlist[i].split("_")[2][:-3]+"jpg")
+        billedFilNavn = mydoc.getElementsByTagName('filename')
+        billedFilNavn = billedFilNavn[0].firstChild.data
+        print(billedFilNavn)
+        
+        klasse = annotlist[i].split("_")[0]
+        # billed = plt.imread("D:/swimcamD/1080/"+klasse+"/"+
+        #                     "1080_"+klasse+"_"+annotlist[i].split("_")[2][:-3]+"jpg")
+        billed = plt.imread(basedir+"/images/"+billedFilNavn)
         zoom = billed[ymin:ymax,xmin:xmax,:]
         print(ymax-ymin,ymax-ymin)
-        matplotlib.image.imsave("D:/swimcamD/Classifier/validation/"+
-                                klasse+"/"+klasse+str(i)+".jpg",zoom)
-        
+        # matplotlib.image.imsave("../../../SwimData/SwimCodes/classification/train/"+
+        #                         klasse+"/"+klasse+str(i)+".jpg",zoom)
+        plt.imsave("../../../SwimData/SwimCodes/classification/train/"+
+                                 klasse+"/"+klasse+str(i)+".jpg",zoom)
     except IndexError:
         print("ingen bounding box")
     
