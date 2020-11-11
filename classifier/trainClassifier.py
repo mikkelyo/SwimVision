@@ -97,7 +97,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                     if phase == 'train':
                         loss.backward()
                         optimizer.step()
-                torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+str(epoch)+".pth")
+                # torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+str(epoch)+".pth")
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
@@ -115,8 +115,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+                
+                print('Saving model...')
                 torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+
-                           str(epoch)+"_"+epoch_acc+".pth")
+                           str(epoch)+"_"+epoch_acc.item()+".pth")
 
         print()
 

@@ -120,7 +120,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
                 # Saves per batch if you want immediate results
-                torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification_genData/models/"+str(epoch)+'batch'+".pth")
+                # print('Saving model...')
+                # torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification_genData/models/"+str(epoch)+'batch'+".pth")
                 print('Batch',batch_count,'completed succesfully')
                 batch_count += 1
             if phase == 'train':
@@ -136,6 +137,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+                print('Saving model...')
                 torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification_genData/models/"+str(epoch)+'_'+str(epoch_acc.item())+".pth")
 
         print()
