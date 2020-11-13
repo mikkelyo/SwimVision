@@ -36,7 +36,7 @@ data_dir = "../../../SwimData/SwimCodes/classification"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=8,
                                              shuffle=True, num_workers=0)
               for x in ['train', 'val']}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
@@ -67,9 +67,9 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
-        batch_count = 1
         # Each epoch has a training and validation phase
         for phase in ['train','val']:
+            batch_count = 1
             if phase == 'train':
                 model.train()  # Set model to training mode
             else:
@@ -97,7 +97,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                     if phase == 'train':
                         loss.backward()
                         optimizer.step()
-                # torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+str(epoch)+".pth")
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
@@ -163,37 +162,35 @@ def visualize_model(model, num_images=6):
     
     
 #%%
-model_conv = torchvision.models.vgg19(pretrained=True,progress=False)
+classifier = torchvision.models.vgg19(pretrained=True,progress=False)
 
-print(model_conv)
-
-for param in model_conv.parameters():
-    param.requires_grad = False
+# for param in classifier.parameters():
+#     param.requires_grad = False
 
 
 # Parameters of newly constructed modules have requires_grad=True by default
 
-#num_ftrs = model_conv.classifier.in_features
-#model_conv.fc = nn.Linear(num_ftrs, 3)
-model_conv.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
+#num_ftrs = classifier.classifier.in_features
+#classifier.fc = nn.Linear(num_ftrs, 3)
+classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
 
 
 
-model_conv = model_conv.to(device)
+classifier = classifier.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
 # Observe that only parameters of final layer are being optimized as
 # opposed to before.
-optimizer_conv = optim.SGD(model_conv.classifier[6].parameters(), lr=0.001, momentum=0.9)
-#optimizer_conv = optim.Adam(model_conv.fc.parameters(), lr=0.0005)
+#optimizer_conv = optim.SGD(classifier.classifier[6].parameters(), lr=0.001, momentum=0.9)
+optimizer_conv = optim.SGD(classifier.parameters(), lr=0.001, momentum=0.9)
 
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
 
 if __name__ == "__main__":
-    print(model_conv)
-    model_conv = train_model(model_conv, criterion, optimizer_conv,
+    print(classifier)
+    classifier = train_model(classifier, criterion, optimizer_conv,
                              exp_lr_scheduler, num_epochs=1500)
 
 

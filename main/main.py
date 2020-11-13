@@ -32,7 +32,7 @@ objectDetector.to(device)
 #Define the classifier
 classifier = models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(classNames),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/6_0.8320413436692506.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/8_0.979328165374677.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 
@@ -69,7 +69,7 @@ with torch.no_grad():
         image = objectDetectorTrans(imagePIL)
         image_z = torch.zeros(1,3,image.shape[1],image.shape[2])
         image_z[0] = image
-        image_z.to(device)
+        image_z = image_z.to(device)
         
         #We make inference. Ignore everything other than "boxes"
         detections = objectDetector(image_z)[0]["boxes"]
@@ -82,7 +82,7 @@ with torch.no_grad():
         for detection in detections:
             #we need the box points in the highRes picture. For that we need 
             #the basiskiftematrix
-            box_points = detection.detach().numpy()
+            box_points = detection.cpu().detach().numpy()
             zoom = imagePIL.crop((box_points[0],box_points[1],box_points[2],box_points[3]))
             try:
                 detectedImage = cv2.rectangle(np.array(imagePIL),(int(box_points[0]),int(box_points[1])),

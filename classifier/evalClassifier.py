@@ -14,21 +14,22 @@ print(device)
 data_transforms = {
     'train': transforms.Compose([
         transforms.Resize((256,256)),
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'val': transforms.Compose([
         transforms.Resize((256,256)),
-        transforms.ToTensor()
-        #transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
 
 
-data_dir = "../../../SwimData/SwimCodes/classification"
+data_dir = "../../../SwimData/SwimCodes/classification_genData"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=8,
                                              shuffle=True, num_workers=0)
               for x in ['train', 'val']}
 
@@ -92,11 +93,11 @@ def imshow(inp, title=None):
 #model = torch.load("../../classifier/Cmodels/3.pt")
 classifier = torchvision.models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification_genData/models/8_0.3824289405684755.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification_genData/models/0_0.2971576227390181.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 
-#visualize_eval(classifier,num_images=4)
+#visualize_eval(classifier,num_images=8)
 
 #test inference time
 
@@ -121,20 +122,22 @@ with torch.no_grad():
         outputs = classifier(inputs)
         _, preds = torch.max(outputs, 1)
         for i in range(len(preds)):
-            all_preds.append(preds[i])
-            all_labels.append(labels[i])
+            all_preds.append(preds[i].item())
+            all_labels.append(labels[i].item())
         print(j)
         conf = confusion_matrix(all_labels,all_preds)
         plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
         plt.colorbar()
         plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
         plt.yticks(np.arange(len(class_names)), class_names)
-        plt.xlabel("Actual code")
-        plt.ylabel("Predicted code")
+        plt.ylabel("Actual code")
+        plt.xlabel("Predicted code")
         plt.show()
         j += 1
+
+print(sum(all_preds==np.ones(len(all_preds))*4)/len(all_preds))
             
-confusion_matrix(all_labels,all_preds)
+
             
 
         
