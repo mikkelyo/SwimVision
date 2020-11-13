@@ -18,8 +18,8 @@ data_transforms = {
     ]),
     'val': transforms.Compose([
         transforms.Resize((256,256)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transforms.ToTensor()
+        #transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
 
@@ -92,7 +92,7 @@ def imshow(inp, title=None):
 #model = torch.load("../../classifier/Cmodels/3.pt")
 classifier = torchvision.models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/6_0.8320413436692506.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification_genData/models/8_0.3824289405684755.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 
