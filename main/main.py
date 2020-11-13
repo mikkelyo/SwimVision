@@ -7,15 +7,21 @@ import torch
 from torchvision import datasets, models, transforms
 from PIL import Image
 import random
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+import torch.nn as nn
+
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
+#define classnames
+classNames = ["A","B","C","D","False"]
+
 #Define the object detector model as objectDetector
 
-objectDetector = torchvision.models.detection.fasterrcnn_resnet50_fpn()
+objectDetector = models.detection.fasterrcnn_resnet50_fpn()
 num_classes = 2 
-in_features = model.roi_heads.box_predictor.cls_score.in_features
+in_features = objectDetector.roi_heads.box_predictor.cls_score.in_features
 objectDetector.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 objectDetector.load_state_dict(torch.load("../../../SwimData/SwimCodes/objectDetection/models/RCNN_13nov.pth",
                                           map_location=device))
@@ -23,8 +29,8 @@ objectDetector.eval()
 objectDetector.to(device)
 
 #Define the classifier
-classifier = torchvision.models.vgg19(pretrained=False,progress=False)
-classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
+classifier = models.vgg19(pretrained=False,progress=False)
+classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(classNames),bias=True)
 classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/6_0.8320413436692506.pth.pth",
                                       map_location=device))
 classifier = classifier.to(device)
@@ -32,7 +38,8 @@ classifier = classifier.to(device)
 
 valPath = "../../../SwimData/SwimCodes/objectDetection/val/images"
 
-filelist = os.listdir(lowResPath)
+filelist = os.listdir(valPath)
+
 random.shuffle(filelist)
 
 basisskifte = np.array([[1920/400,0,0,0],
@@ -46,7 +53,7 @@ classtrans = transforms.Compose([ transforms.Resize((256,256)),
         ])
 
 objectDetectorTrans = transforms.Compose([transforms.ToTensor()])
-classNames = ["A","B","C","D","False"]
+
 
 t0 = time.time()
 for i in range(len(filelist)):
@@ -74,7 +81,7 @@ for i in range(len(filelist)):
         #we need the box points in the highRes picture. For that we need 
         #the basiskiftematrix
         box_points = detection.detach().numpy()
-        zoom = imagePIL.crop(boxpoints[0])
+        zoom = imagePIL.crop(box_points[0],box_points[1],box_points[2],box_points[3])
         #zoom = highRes[int(box_points[1]):int(box_points[3]),int(box_points[0]):int(box_points[2])]
         try:
             plt.imshow(np.array(imagePIL))
@@ -82,7 +89,7 @@ for i in range(len(filelist)):
             plt.imshow(zoom)
             plt.show()
             
-            zoom = Image.fromarray(zoom)
+            #zoom = Image.fromarray(zoom)
             zoom = classtrans(zoom)
             nul = torch.zeros((1,3,256,256))
             nul[0] = zoom

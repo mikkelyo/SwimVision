@@ -12,6 +12,7 @@ from trainObjectDetection import SwimSet
 from trainObjectDetection import mincollate
 from trainObjectDetection import imshow
 
+
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 model = torchvision.models.detection.fasterrcnn_resnet50_fpn()
