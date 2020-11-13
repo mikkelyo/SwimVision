@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import time
 import os
 import torch.nn as nn
+from sklearn.metrics import confusion_matrix
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -13,18 +14,12 @@ print(device)
 data_transforms = {
     'train': transforms.Compose([
         transforms.Resize((256,256)),
-        transforms.ColorJitter(brightness=0.3,contrast=0.3,saturation=0.1,hue=0.1),
-        transforms.RandomRotation(180),
-        transforms.RandomPerspective(p=0.1),
-        transforms.RandomGrayscale(),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transforms.ToTensor()
     ]),
     'val': transforms.Compose([
         transforms.Resize((256,256)),
         transforms.ToTensor(),
-        #transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
 
@@ -33,8 +28,8 @@ data_dir = "../../../SwimData/SwimCodes/classification"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,
-                                             shuffle=False, num_workers=0)
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
+                                             shuffle=True, num_workers=0)
               for x in ['train', 'val']}
 
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
@@ -85,9 +80,9 @@ def imshow_norm(inp, title=None):
 def imshow(inp, title=None):
     """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
-    # mean = np.array([0.485, 0.456, 0.406])
-    # std = np.array([0.229, 0.224, 0.225])
-    # inp = std * inp + mean
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    inp = std * inp + mean
     inp = np.clip(inp, 0, 1)
     plt.imshow(inp)
     if title is not None:
@@ -95,12 +90,13 @@ def imshow(inp, title=None):
     plt.pause(0.001) 
 
 #model = torch.load("../../classifier/Cmodels/3.pt")
-model_conv = torchvision.models.vgg19(pretrained=False,progress=False)
-model_conv.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
-model_conv.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification_genData/models/0batch.pth"))
-model_conv = model_conv.to(device)
+classifier = torchvision.models.vgg19(pretrained=False,progress=False)
+classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
+classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/6_0.8320413436692506.pth",
+                                      map_location=device))
+classifier = classifier.to(device)
 
-visualize_eval(model_conv,num_images=4)
+#visualize_eval(classifier,num_images=4)
 
 #test inference time
 
@@ -109,9 +105,36 @@ visualize_eval(model_conv,num_images=4)
 #    for inputs, labels in dataloaders["val"]:
 #        inputs = inputs.to(device)
 #        labels = labels.to(device)
-#        outputs = model(inputs)
+#        outputs = classifier(inputs)
 #        _, preds = torch.max(outputs, 1)
 #time_spent = time.time()-starttime
 #print(dataset_sizes["val"]/time_spent," fps")
+
+#-------Confusion matrix ----------
+all_preds = []
+all_labels = []
+j = 1
+with torch.no_grad():
+    for inputs, labels in dataloaders["val"]:
+        inputs = inputs.to(device)
+        labels = labels.to(device)
+        outputs = classifier(inputs)
+        _, preds = torch.max(outputs, 1)
+        for i in range(len(preds)):
+            all_preds.append(preds[i])
+            all_labels.append(labels[i])
+        print(j)
+        conf = confusion_matrix(all_labels,all_preds)
+        plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
+        plt.colorbar()
+        plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
+        plt.yticks(np.arange(len(class_names)), class_names)
+        plt.xlabel("Actual code")
+        plt.ylabel("Predicted code")
+        plt.show()
+        j += 1
+            
+confusion_matrix(all_labels,all_preds)
+            
 
         

@@ -14,13 +14,10 @@ from trainObjectDetection import imshow
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-model = torchvision.models.detection.fasterrcnn_resnet50_fpn()
-num_classes = 2 
-in_features = model.roi_heads.box_predictor.cls_score.in_features
-model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-model.load_state_dict(torch.load("../../../SwimData/SwimCodes/objectDetection/models/0_0.428.pth"))
+model = torch.load("../../../SwimData/SwimCodes/objectDetection/models/14_5.76.pt",
+                   map_location=device)
+
 model.eval()
-model.to(device)
 
 tran = transforms.Compose([transforms.ToTensor()])
 
