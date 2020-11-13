@@ -1,3 +1,4 @@
 
 *.pyc
 *.pyc
+main/.pylint.d/main1.stats
