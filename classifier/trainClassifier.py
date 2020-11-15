@@ -15,6 +15,7 @@ import PIL
 import cv2
 import random
 from PIL import Image
+from sklearn.metrics import confusion_matrix
 
 #%%
 # Data augmentation and normalization for training
@@ -32,7 +33,7 @@ data_transforms = {
     ]),
 }
 
-data_dir = "../../../SwimData/SwimCodes/classification"
+data_dir = "../../../SwimData/SwimCodes/classification2"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
@@ -55,7 +56,31 @@ def imshow(inp, title=None):
     plt.imshow(inp)
     if title is not None:
         plt.title(title)
-    plt.pause(0.001)  # pause a bit so that plots are updated
+    plt.pause(0.001) # pause a bit so that plots are updated
+    
+def confusionMatrix(dataloader):
+    all_preds = []
+    all_labels = []
+    j = 1
+    with torch.no_grad():
+        for inputs, labels in dataloader:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            outputs = classifier(inputs)
+            _, preds = torch.max(outputs, 1)
+            for i in range(len(preds)):
+                all_preds.append(preds[i].item())
+                all_labels.append(labels[i].item())
+            print(j)
+            conf = confusion_matrix(all_labels,all_preds)
+            plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
+            plt.colorbar()
+            plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
+            plt.yticks(np.arange(len(class_names)), class_names)
+            plt.ylabel("Actual code")
+            plt.show()
+            j += 1
+            
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
@@ -119,8 +144,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 best_model_wts = copy.deepcopy(model.state_dict())
                 
                 print('Saving model...')
-                torch.save(model.state_dict(),"../../../SwimData/SwimCodes/classification/models/"+
-                           str(epoch)+"_"+str(epoch_acc.item())+".pth")
+                torch.save(model.state_dict(),os.path.join(data_dir,"models",
+                           str(epoch)+"_"+str(epoch_acc.item())+".pth"))
 
         print()
 
