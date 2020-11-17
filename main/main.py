@@ -16,7 +16,7 @@ import cv2
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 #define classnames
-classNames = ["A","B","C","D","False"]
+classNames = ["A", "B", "C", "D", "False"]
 
 #Define the object detector model as objectDetector
 
