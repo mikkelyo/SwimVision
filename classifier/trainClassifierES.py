@@ -41,7 +41,7 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 }
-batch_size = 4
+batch_size = 8
 artLen = 1000
 
 data_dir = "../../../SwimData/SwimCodes/classification3"
@@ -107,15 +107,14 @@ def confusionMatrix(dataloader):
             for i in range(len(preds)):
                 all_preds.append(preds[i].item())
                 all_labels.append(labels[i].item())
-            print(j)
-            conf = confusion_matrix(all_labels,all_preds)
-            plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
-            plt.colorbar()
-            plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
-            plt.yticks(np.arange(len(class_names)), class_names)
-            plt.ylabel("Actual code")
-            plt.show()
-            j += 1
+    conf = confusion_matrix(all_labels,all_preds)
+    plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
+    plt.colorbar()
+    plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
+    plt.yticks(np.arange(len(class_names)), class_names)
+    plt.ylabel("Actual code")
+    plt.show()
+    j += 1
             
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
@@ -168,11 +167,14 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             if (phase == 'realTrain' or phase == "artTrain"):
                 scheduler.step()
 
-            epoch_loss = running_loss / dataset_sizes[phase]
-            epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            epoch_loss = running_loss / Ns[phase]
+            epoch_acc = running_corrects.double() / Ns[phase]
 
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
+            
+            if (phase == "artVal" or phase == "realVal"):
+                confusionMatrix(dataloaders[phase])
 
             # deep copy the model
             if phase == 'realVal' and epoch_acc > best_acc:

@@ -151,7 +151,7 @@ trans2 = transforms.Compose([transforms.Resize((256,256)),
                              transforms.ColorJitter(brightness=0.5),
                              BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
                              GauBlur(0.5),
-                             transforms.Resize((15,15)),
+                             transforms.Resize((20,20)),
                              transforms.Resize((256,256)),
                              ])
 
@@ -177,7 +177,7 @@ trans2 = transforms.Compose([transforms.Resize((256,256)),
 
 
 
-image = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/A/SwimCode1_transparent.png")
+image = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/D/SwimCode4_transparent.png")
 
 for i in range(500):
     gen_image = trans2(image)
@@ -186,7 +186,7 @@ for i in range(500):
     # plt.show()
     if i%50==0:
         print(i,'images generated')
-    gen_image.save('/Users/MI/Documents/GitHub/SwimVision/classifier/generated_swimcodes/D/'+'D'+str(i)+'.jpg')
+    gen_image.save('../../../SwimData/SwimCodes/classification3/artTrain/D/'+'D'+str(i)+'.jpg')
 
 
 

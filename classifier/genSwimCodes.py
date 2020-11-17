@@ -155,15 +155,14 @@ if __name__ == "__main__":
                              transforms.ColorJitter(brightness=0.5),
                              BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
                              GauBlur(0.5),
-                             transforms.Resize((15,15)),
+                             transforms.Resize((20,20)),
                              transforms.Resize((256,256)),
-                             convert_to_rgb()
                              ])
     
     trans3 = transforms.Compose([transforms.Resize((256, 256)),
                              HoriBlur(1)])
 
-    billed = PIL.Image.open("../../../SwimData/SwimCodes/classification3/artTrain/D/SwimCode4_transparent.png")
+    billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/A/SwimCode1_transparent.png")
     plt.imshow(billed)
     plt.show()
     nytbild = trans2(billed)
