@@ -16,7 +16,7 @@ import cv2
 import random
 from PIL import Image
 from sklearn.metrics import confusion_matrix
-from genSwimCodes import GauBlur, BackGround
+from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 #%%
 # Data augmentation and normalization for training
 # Just normalization for validation
@@ -41,6 +41,7 @@ data_transforms = {
         GauBlur(0.5),
         transforms.Resize((15,15)),
         transforms.Resize((256,256)),
+        convert_to_rgb(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ]),
@@ -97,9 +98,8 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001) # pause a bit so that plots are updated
 
-for images,targets in dataloaders["artTrain"]:
-    print(targets)
-"""
+
+
 def confusionMatrix(dataloader):
     all_preds = []
     all_labels = []
@@ -135,7 +135,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
         # Each epoch has a training and validation phase
-        for phase in ["artTrain", "realVal", "artTrain", "artVal"]:
+        for phase in ["realTrain", "realVal", "artTrain", "artVal"]:
             batch_count = 1
             if (phase == 'realTrain' or phase == "artTrain"):
                 model.train()  # Set model to training mode
@@ -262,7 +262,7 @@ if __name__ == "__main__":
                              exp_lr_scheduler, num_epochs=1500)
 
 
-"""
+
 
 
 
