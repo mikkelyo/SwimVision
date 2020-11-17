@@ -122,11 +122,14 @@ class BackGround(object):
     def __call__(self,img):
         if random.random() < self.p:
             background = random.choice(os.listdir(self.path))
-            background = Image.open(self.path+"/"+background)
+            try:
+                background = Image.open(self.path+"/"+background)
+            except OSError:
+                return img
             background = background.resize((256,256))
             background = background.convert("RGBA")
             
-            img = img.resize((400,400))
+            img = img.resize((350,350))
             img = img.convert("RGBA")
             
             points = np.linspace(-75,0,1)
@@ -140,7 +143,11 @@ class BackGround(object):
 
 
 
-trans2 = transforms.Compose([transforms.Resize((256,256)),
+
+
+if __name__ == "__main__":
+    
+    trans2 = transforms.Compose([transforms.Resize((256,256)),
                              GauBlur(1),
                              transforms.RandomRotation(180),
                              transforms.RandomHorizontalFlip(),
@@ -149,18 +156,19 @@ trans2 = transforms.Compose([transforms.Resize((256,256)),
                              BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
                              GauBlur(0.5),
                              transforms.Resize((15,15)),
-                             transforms.Resize((256,256))
+                             transforms.Resize((256,256)),
+                             convert_to_rgb()
                              ])
-trans3 = transforms.Compose([transforms.Resize((256, 256)),
+    
+    trans3 = transforms.Compose([transforms.Resize((256, 256)),
                              HoriBlur(1)])
 
-
-billed = PIL.Image.open("../../../SwimData/SwimCodes/classification3/artTrain/C/SwimCode3_transparent.png")
-plt.imshow(billed)
-plt.show()
-nytbild = trans2(billed)
-plt.imshow(nytbild)
-plt.show()
+    billed = PIL.Image.open("../../../SwimData/SwimCodes/classification3/artTrain/D/SwimCode4_transparent.png")
+    plt.imshow(billed)
+    plt.show()
+    nytbild = trans2(billed)
+    plt.imshow(nytbild)
+    plt.show()
 
 # # background = Image.open("../../background.jpg")
 # # background = background.resize((256,256))

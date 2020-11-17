@@ -32,16 +32,6 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'artTrain': transforms.Compose([transforms.Resize((256,256)),
-        GauBlur(1),
-        transforms.RandomRotation(180),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomPerspective(p=0.8),
-        transforms.ColorJitter(brightness=0.5),
-        #BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
-        GauBlur(0.5),
-        transforms.Resize((15,15)),
-        transforms.Resize((256,256)),
-        convert_to_rgb(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ]),
@@ -99,6 +89,10 @@ def imshow(inp, title=None):
     plt.pause(0.001) # pause a bit so that plots are updated
 
 
+# for images, targets in dataloaders["artTrain"]:
+#     imshow(images[0])
+#     print(targets)
+    
 
 def confusionMatrix(dataloader):
     all_preds = []
@@ -135,7 +129,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
         # Each epoch has a training and validation phase
-        for phase in ["artTrain", "realVal", "artTrain", "artVal"]:
+        for phase in ["realTrain", "realVal", "artTrain", "artVal"]:
             batch_count = 1
             if (phase == 'realTrain' or phase == "artTrain"):
                 model.train()  # Set model to training mode
@@ -147,8 +141,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
-                print(labels)
-                imshow(inputs[0])
                 inputs = inputs.to(device)
                 labels = labels.to(device)
 
