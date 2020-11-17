@@ -155,7 +155,7 @@ trans3 = transforms.Compose([transforms.Resize((256, 256)),
                              HoriBlur(1)])
 
 
-billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/C/SwimCode3_transparent.png")
+billed = PIL.Image.open("../../../SwimData/SwimCodes/classification3/artTrain/C/SwimCode3_transparent.png")
 plt.imshow(billed)
 plt.show()
 nytbild = trans2(billed)

@@ -37,7 +37,7 @@ data_transforms = {
         transforms.RandomHorizontalFlip(),
         transforms.RandomPerspective(p=0.8),
         transforms.ColorJitter(brightness=0.5),
-        BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
+        #BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
         GauBlur(0.5),
         transforms.Resize((15,15)),
         transforms.Resize((256,256)),
@@ -135,7 +135,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
         # Each epoch has a training and validation phase
-        for phase in ["realTrain", "realVal", "artTrain", "artVal"]:
+        for phase in ["artTrain", "realVal", "artTrain", "artVal"]:
             batch_count = 1
             if (phase == 'realTrain' or phase == "artTrain"):
                 model.train()  # Set model to training mode
