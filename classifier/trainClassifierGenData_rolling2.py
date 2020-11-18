@@ -27,11 +27,13 @@ from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 data_transforms = {
     'realTrain': transforms.Compose([
         transforms.Resize((256, 256)),
+        convert_to_rgb(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'realVal': transforms.Compose([
         transforms.Resize((256, 256)),
+        convert_to_rgb(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
@@ -51,6 +53,7 @@ data_transforms = {
                              ]),
     'artVal' : transforms.Compose([
         transforms.Resize((256, 256)),
+        convert_to_rgb(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
