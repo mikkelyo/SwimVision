@@ -145,7 +145,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
         # Each epoch has a training and validation phase
-        for phase in ["artTrain", "realVal", "artTrain", "artVal"]:
+        for phase in ["artTrain", "artVal", "realTrain", "realVal"]:
             batch_count = 1
             if (phase == 'realTrain' or phase == "artTrain"):
                 model.train()  # Set model to training mode
