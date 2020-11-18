@@ -6,10 +6,14 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 import numpy as np
 import torchvision
-from torchvision import datasets, models, transforms
+from torchvision import models, transforms
+import os
+os.chdir("../misc")
+from imagefolder import ImageFolder
+os.chdir("../classifier") 
 import matplotlib.pyplot as plt
 import time
-import os
+
 import copy
 import PIL
 import cv2
@@ -32,9 +36,19 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'artTrain': transforms.Compose([transforms.Resize((256,256)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ]),
+                             GauBlur(0.2),
+                             transforms.RandomRotation(180),
+                             transforms.RandomHorizontalFlip(),
+                             transforms.RandomPerspective(p=0.5),
+                             transforms.ColorJitter(brightness=0.3),
+                             BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
+                             GauBlur(0.2),
+                             transforms.Resize((25,25)),
+                             transforms.Resize((256,256)),
+                             convert_to_rgb(),
+                             transforms.ToTensor(),
+                             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+                             ]),
     'artVal' : transforms.Compose([
         transforms.Resize((256, 256)),
         transforms.ToTensor(),
@@ -44,8 +58,8 @@ data_transforms = {
 batch_size = 8
 artLen = 1000
 
-data_dir = "../../../SwimData/SwimCodes/classification3"
-image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
+data_dir = "../../../SwimData/SwimCodes/classification4"
+image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['realTrain', 'realVal',"artTrain","artVal"]}

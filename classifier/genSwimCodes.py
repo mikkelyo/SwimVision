@@ -129,10 +129,10 @@ class BackGround(object):
             background = background.resize((256,256))
             background = background.convert("RGBA")
             
-            img = img.resize((350,350))
+            img = img.resize((324,325))
             img = img.convert("RGBA")
             
-            points = np.linspace(-75,0,1)
+            points = np.linspace(-65,10,1)
             x = int(random.choice(points))
             y = int(random.choice(points))
             background.paste(img,(x,y),img)
@@ -148,14 +148,14 @@ class BackGround(object):
 if __name__ == "__main__":
     
     trans2 = transforms.Compose([transforms.Resize((256,256)),
-                             GauBlur(1),
+                             GauBlur(0.2),
                              transforms.RandomRotation(180),
                              transforms.RandomHorizontalFlip(),
-                             transforms.RandomPerspective(p=0.8),
-                             transforms.ColorJitter(brightness=0.5),
+                             transforms.RandomPerspective(p=0.5),
+                             transforms.ColorJitter(brightness=0.3),
                              BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
-                             GauBlur(0.5),
-                             transforms.Resize((20,20)),
+                             GauBlur(0.2),
+                             transforms.Resize((25,25)),
                              transforms.Resize((256,256)),
                              ])
     

@@ -32,7 +32,7 @@ objectDetector.to(device)
 #Define the classifier
 classifier = models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(classNames),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification/models/8_0.979328165374677.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification3/models/5_0.9612403100775194.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 

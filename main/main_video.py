@@ -11,8 +11,7 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 import torch.nn as nn
 import cv2 
 
-videosti = "C:/Users/elleh_000/Downloads/IMG_0406.mp4"
-print("hej")
+videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -45,7 +44,7 @@ classtrans = transforms.Compose([ transforms.Resize((256,256)),
         ])
 
 objectDetectorTrans = transforms.Compose([transforms.ToTensor()])
-print("hej")
+
 
 cap = cv2.VideoCapture(videosti)
 t0 = time.time()
@@ -72,7 +71,8 @@ with torch.no_grad():
                 #we need the box points in the highRes picture. For that we need 
                 #the basiskiftematrix
                 box_points = detection.cpu().detach().numpy()
-                zoom = imagePIL.crop((box_points[0], box_points[1], box_points[2], box_points[3]))
+                zoom = imagePIL.crop((box_points[0]-50, box_points[1]-50,
+                                      box_points[2]+50, box_points[3]+50))
                 try:
                     detectedImage = cv2.rectangle(np.array(imagePIL),(int(box_points[0]),int(box_points[1])),
                                                   (int(box_points[2]),int(box_points[3])),color=(255,255,0),
