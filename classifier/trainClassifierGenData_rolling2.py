@@ -27,7 +27,7 @@ from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 data_transforms = {
     'realTrain': transforms.Compose([
         transforms.Resize((256, 256)),
-        convert_to_rgb(),
+        convert_to_rgb(), #convert to RGB, because RGBA doesn't work
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
