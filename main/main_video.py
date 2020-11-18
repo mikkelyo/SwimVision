@@ -11,7 +11,8 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 import torch.nn as nn
 import cv2 
 
-videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
+# videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
+videosti = '/Users/MI/Documents/SwimData/SwimCodes/temp/trim.mp4'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -62,17 +63,17 @@ with torch.no_grad():
             image_z = image_z.to(device)
             
             #We make inference. Ignore everything other than "boxes"
-            detections = objectDetector(image_z)[0]["boxes"]
-            print("Box points: ",detections)
+            detections = objectDetector(image_z)[0] #["boxes"]
+            print("Box points: ",detections['boxes'])
             t1 = time.time()
             print(t1-t0," sec")
             t0=t1
-            for detection in detections:
+            for detection in detections['boxes']:
                 #we need the box points in the highRes picture. For that we need 
                 #the basiskiftematrix
                 box_points = detection.cpu().detach().numpy()
-                zoom = imagePIL.crop((box_points[0]-50, box_points[1]-50,
-                                      box_points[2]+50, box_points[3]+50))
+                zoom = imagePIL.crop((box_points[0]-10, box_points[1]-10,
+                                      box_points[2]+10, box_points[3]+10))
                 try:
                     detectedImage = cv2.rectangle(np.array(imagePIL),(int(box_points[0]),int(box_points[1])),
                                                   (int(box_points[2]),int(box_points[3])),color=(255,255,0),
@@ -90,7 +91,7 @@ with torch.no_grad():
                     nul = nul.to(device)
                     outputs = classifier(nul)
                     _, preds = torch.max(outputs, 1)
-                    print("I predict: ",classNames[preds])
+                    print("I predict: ",classNames[preds],'with a confidence of:',detections['scores'])
                     
                 except ValueError:
                     print("tomt zoom")
