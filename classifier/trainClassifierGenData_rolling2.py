@@ -61,7 +61,7 @@ data_transforms = {
 batch_size = 8
 artLen = 1000
 
-data_dir = "../../../SwimData/SwimCodes/classification4"
+data_dir = "../../../SwimData/SwimCodes/classification5"
 image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
@@ -136,7 +136,6 @@ def confusionMatrix(dataloader):
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
-    since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
@@ -147,6 +146,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         # Each epoch has a training and validation phase
         for phase in ["artTrain", "artVal", "realTrain", "realVal"]:
             batch_count = 1
+            since = time.time()
             if (phase == 'realTrain' or phase == "artTrain"):
                 model.train()  # Set model to training mode
             else:
@@ -157,8 +157,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
-                imshow(inputs[0])
-                print(labels)
                 inputs = inputs.to(device)
                 labels = labels.to(device)
 
@@ -182,6 +180,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 running_corrects += torch.sum(preds == labels.data)
                 if batch_count%50 ==0:
                     print('Batch',batch_count,'completed succesfully')
+                    print("sec pr. Batch: ", (time.time()-since)/(batch_count-1))
                 batch_count += 1
             if (phase == 'realTrain' or phase == "artTrain"):
                 scheduler.step()
@@ -196,13 +195,13 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 confusionMatrix(dataloaders[phase])
 
             # deep copy the model
-            if phase == 'realVal' and epoch_acc > best_acc:
-                best_acc = epoch_acc
-                best_model_wts = copy.deepcopy(model.state_dict())
-                
+            # if phase == 'realVal' and epoch_acc > best_acc:
+            #     best_acc = epoch_acc
+            #     best_model_wts = copy.deepcopy(model.state_dict())
+            if phase == "realVal":    
                 print('Saving model...')
                 torch.save(model.state_dict(),os.path.join(data_dir,"models",
-                           str(epoch)+"_"+str(epoch_acc.item())+".pth"))
+                           str(epoch)+"_"+str(round(epoch_acc.item(),3))+".pth"))
 
         print()
 

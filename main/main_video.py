@@ -12,7 +12,7 @@ import torch.nn as nn
 import cv2 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-videosti = '/Users/MI/Documents/SwimData/SwimCodes/temp/trim.mp4'
+videosti = '../../../SwimData/SwimCodes/temp/IMG_0415.mp4'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -35,7 +35,7 @@ objectDetector.to(device)
 #Define the classifier
 classifier = models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(classNames),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification3/models/5_0.9612403100775194.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification4/models/2_0.9926739926739927.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 
@@ -69,8 +69,6 @@ with torch.no_grad():
             print(t1-t0," sec")
             t0=t1
             for detection in detections['boxes']:
-                #we need the box points in the highRes picture. For that we need 
-                #the basiskiftematrix
                 box_points = detection.cpu().detach().numpy()
                 zoom = imagePIL.crop((box_points[0]-10, box_points[1]-10,
                                       box_points[2]+10, box_points[3]+10))
@@ -91,7 +89,7 @@ with torch.no_grad():
                     nul = nul.to(device)
                     outputs = classifier(nul)
                     _, preds = torch.max(outputs, 1)
-                    print("I predict: ",classNames[preds],'with a confidence of:',detections['scores'])
+                    print("I predict: ",classNames[preds],'with a confidence of:',detections['scores'].item())
                     
                 except ValueError:
                     print("tomt zoom")
