@@ -12,7 +12,7 @@ import torch.nn as nn
 import cv2 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-videosti = '../../../SwimData/SwimCodes/temp/IMG_0415.mp4'
+videosti = '../../../SwimData/SwimCodes/temp/A.mp4'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -92,7 +92,7 @@ with torch.no_grad():
                     print("I predict: ",classNames[preds],'with a confidence of:',detections['scores'].item())
                     
                 except ValueError:
-                    print("tomt zoom")
+                    print("zoom is including areas outside the image, this error hasnt been fixed yet")
             print("\n")
     
     
