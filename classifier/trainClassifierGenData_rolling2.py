@@ -124,7 +124,7 @@ def confusionMatrix(dataloader):
             for i in range(len(preds)):
                 all_preds.append(preds[i].item())
                 all_labels.append(labels[i].item())
-    conf = confusion_matrix(all_labels,all_preds,np.arange(len(class_names)))
+    conf = confusion_matrix(all_labels,all_preds,labels=np.arange(len(class_names)))
     plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
     plt.colorbar()
     plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
