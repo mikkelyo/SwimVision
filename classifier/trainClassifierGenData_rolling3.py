@@ -64,18 +64,18 @@ artLen = 1000
 data_dir = "../../../SwimData/SwimCodes/classification5"
 image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
-                  for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
-dataset_sizes = {x: len(image_datasets[x]) for x in ['realTrain', 'realVal',"artTrain","artVal"]}
+                  for x in ['real', 'art']}
+dataset_sizes = {x: len(image_datasets[x]) for x in ['real', 'art']}
 
 classCounts = {x:[image_datasets[x].targets.count(Class) for
               Class in np.unique(image_datasets[x].targets)]
-               for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
+               for x in ['real', 'art']}
 
 sampleWeights = {x: np.array([1.0/np.array(classCounts[x])[t] for t in image_datasets[x].targets])
-                 for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
+                 for x in ['real', 'art']}
 
-Ns = {"realTrain": dataset_sizes["realTrain"],
-      "realVal": dataset_sizes["realVal"],
+Ns = {"realTrain": int(0.8*dataset_sizes["real"]),
+      "realVal": int(0.2*dataset_sizes["realVal"]),
       "artTrain": artLen,
       "artVal": dataset_sizes["artVal"]}
 
@@ -124,7 +124,7 @@ def confusionMatrix(dataloader):
             for i in range(len(preds)):
                 all_preds.append(preds[i].item())
                 all_labels.append(labels[i].item())
-    conf = confusion_matrix(all_labels,all_preds,np.arange(len(class_names)))
+    conf = confusion_matrix(all_labels,all_preds)
     plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
     plt.colorbar()
     plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
