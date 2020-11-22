@@ -67,12 +67,16 @@ image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
                   for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['realTrain', 'realVal',"artTrain","artVal"]}
 
+class_names = image_datasets['realTrain'].classes
+print('Types of classes:',class_names)
+
 classCounts = {x:[image_datasets[x].targets.count(Class) for
-              Class in np.unique(image_datasets[x].targets)]
+              Class in np.arange(len(class_names))]
                for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
 
 sampleWeights = {x: np.array([1.0/np.array(classCounts[x])[t] for t in image_datasets[x].targets])
                  for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
+
 
 Ns = {"realTrain": dataset_sizes["realTrain"],
       "realVal": dataset_sizes["realVal"],
@@ -88,13 +92,11 @@ dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batc
                for x in ["realTrain", "realVal", "artTrain", "artVal"]}
                 
 
-class_names = image_datasets['realTrain'].classes
-print('Types of classes:',class_names)
+
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def imshow(inp, title=None):
-    """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
     mean = np.array([0.485, 0.456, 0.406])
     std = np.array([0.229, 0.224, 0.225])
