@@ -45,7 +45,7 @@ data_transforms = {
                              transforms.ColorJitter(brightness=0.3),
                              BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
                              GauBlur(0.2),
-                             transforms.Resize((25,25)),
+                             transforms.Resize((35,35)),
                              transforms.Resize((256,256)),
                              convert_to_rgb(),
                              transforms.ToTensor(),
