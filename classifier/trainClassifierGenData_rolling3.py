@@ -58,7 +58,7 @@ data_transforms = {
         ])
 }
 batch_size = 8
-artLen = 1000
+artLen = 300
 
 data_dir = "../../../SwimData/GeoCodes/classification2"
 image_datasets = {x: ImageFolder(os.path.join(data_dir, x.split("_")[0]),
@@ -78,6 +78,7 @@ classCounts = {x:[image_datasets[x].targets.count(Class) for
 
 sampleWeights = {x: np.array([1.0/np.array(classCounts[x])[t] for t in image_datasets[x].targets])
                  for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
+
 
 # indeksliste = set(np.arange(len(realMaster)))
 # valliste = set(random.sample(indeksliste,int(0.2*len(realMaster))))
@@ -170,12 +171,10 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
 
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
-                print(labels)
-                imshow(inputs[0])
                 inputs = inputs.to(device)
                 labels = labels.to(device)
                 
-                """
+                
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
@@ -221,7 +220,7 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
 
     # load best model weights
     model.load_state_dict(best_model_wts)
-    """
+    
     return model
 
 def visualize_model(model, num_images=6):
@@ -277,7 +276,7 @@ optimizer_conv = optim.SGD(classifier.parameters(), lr=0.001, momentum=0.9)
 
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
-K = 5
+K = 10
 
 if __name__ == "__main__":
     print(classifier)
@@ -288,8 +287,26 @@ if __name__ == "__main__":
         valliste = set(random.sample(alindeks-brugtindeks,int(1/K*len(realMaster))))
         trænliste = alindeks-valliste
         brugtindeks.union(valliste)
-        image_datasets["real_Val"] = torch.utils.data.Subset(realMaster, list(valliste))
+        
+        sampleWeights["real_Train"] = np.array([1.0/np.array(classCounts["real_Train"])[t] for
+                                                t in [realMaster.targets[i] for i in trænliste]])
+        
+        samplers["real_Train"] = torch.utils.data.WeightedRandomSampler(sampleWeights["real_Train"],
+                                                                  Ns["real_Train"])
+        
         image_datasets["real_Train"] = torch.utils.data.Subset(realMaster, list(trænliste))
+        
+        
+        sampleWeights["real_Val"] = np.array([1.0/np.array(classCounts["real_Val"])[t] for
+                                                t in [realMaster.targets[i] for i in valliste]])
+        
+        samplers["real_Train"] = torch.utils.data.WeightedRandomSampler(sampleWeights["real_Val"],
+                                                                  Ns["real_Val"])
+        
+        image_datasets["real_Train"] = torch.utils.data.Subset(realMaster, list(valliste))
+        
+        
+        
         dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size,
                                               num_workers=0, sampler=samplers[x])                                             
                for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
