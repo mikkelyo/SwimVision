@@ -129,10 +129,10 @@ class BackGround(object):
             background = background.resize((256,256))
             background = background.convert("RGBA")
             
-            img = img.resize((324,325))
+            img = img.resize((270,270))
             img = img.convert("RGBA")
             
-            points = np.linspace(-65,10,1)
+            points = np.linspace(-15,60,1)
             x = int(random.choice(points))
             y = int(random.choice(points))
             background.paste(img,(x,y),img)
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     trans3 = transforms.Compose([transforms.Resize((256, 256)),
                              HoriBlur(1)])
 
-    billed = PIL.Image.open("../../../SwimData/SwimCodes/SwimCodes_pngs/A/SwimCode1_transparent.png")
+    billed = PIL.Image.open("../../../SwimData/GeoCodes/classification2/art/A/A.png")
     plt.imshow(billed)
     plt.show()
     nytbild = trans2(billed)

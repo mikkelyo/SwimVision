@@ -10,6 +10,7 @@ from torchvision import models, transforms
 import os
 os.chdir("../misc")
 from imagefolder import ImageFolder
+from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 os.chdir("../classifier") 
 import matplotlib.pyplot as plt
 import time
@@ -20,7 +21,6 @@ import cv2
 import random
 from PIL import Image
 from sklearn.metrics import confusion_matrix
-from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 #%%
 # Data augmentation and normalization for training
 # Just normalization for validation

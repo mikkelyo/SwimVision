@@ -10,34 +10,33 @@ from torchvision import models, transforms
 import os
 os.chdir("../misc")
 from imagefolder import ImageFolder
+from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 os.chdir("../classifier") 
 import matplotlib.pyplot as plt
 import time
-
 import copy
 import PIL
 import cv2
 import random
 from PIL import Image
 from sklearn.metrics import confusion_matrix
-from genSwimCodes import GauBlur, BackGround, convert_to_rgb
 #%%
 # Data augmentation and normalization for training
 # Just normalization for validation
 data_transforms = {
-    'realTrain': transforms.Compose([
+    'real_Train': transforms.Compose([
         transforms.Resize((256, 256)),
         convert_to_rgb(), #convert to RGB, because RGBA doesn't work
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
-    'realVal': transforms.Compose([
+    'real_Val': transforms.Compose([
         transforms.Resize((256, 256)),
         convert_to_rgb(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
-    'artTrain': transforms.Compose([transforms.Resize((256,256)),
+    'art_Train': transforms.Compose([transforms.Resize((256,256)),
                              GauBlur(0.2),
                              transforms.RandomRotation(180),
                              transforms.RandomHorizontalFlip(),
@@ -45,13 +44,13 @@ data_transforms = {
                              transforms.ColorJitter(brightness=0.3),
                              BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
                              GauBlur(0.2),
-                             transforms.Resize((25,25)),
+                             transforms.Resize((35,35)),
                              transforms.Resize((256,256)),
                              convert_to_rgb(),
                              transforms.ToTensor(),
                              transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
                              ]),
-    'artVal' : transforms.Compose([
+    'art_Val' : transforms.Compose([
         transforms.Resize((256, 256)),
         convert_to_rgb(),
         transforms.ToTensor(),
@@ -61,40 +60,55 @@ data_transforms = {
 batch_size = 8
 artLen = 1000
 
-data_dir = "../../../SwimData/SwimCodes/classification5"
-image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
+data_dir = "../../../SwimData/GeoCodes/classification2"
+image_datasets = {x: ImageFolder(os.path.join(data_dir, x.split("_")[0]),
                                           data_transforms[x])
-                  for x in ['real', 'art']}
-dataset_sizes = {x: len(image_datasets[x]) for x in ['real', 'art']}
+                  for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
+realMaster = image_datasets['real_Train']
+
+dataset_sizes = {x: len(image_datasets[x]) for x in ['art_Train', 'art_Val', 
+                                                     'real_Train', 'real_Val']}
+
+class_names = image_datasets['art_Train'].classes
+print('Types of classes:',class_names)
 
 classCounts = {x:[image_datasets[x].targets.count(Class) for
-              Class in np.unique(image_datasets[x].targets)]
-               for x in ['real', 'art']}
+              Class in np.arange(len(class_names))]
+               for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
 
 sampleWeights = {x: np.array([1.0/np.array(classCounts[x])[t] for t in image_datasets[x].targets])
-                 for x in ['real', 'art']}
+                 for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
 
-Ns = {"realTrain": int(0.8*dataset_sizes["real"]),
-      "realVal": int(0.2*dataset_sizes["realVal"]),
-      "artTrain": artLen,
-      "artVal": dataset_sizes["artVal"]}
+# indeksliste = set(np.arange(len(realMaster)))
+# valliste = set(random.sample(indeksliste,int(0.2*len(realMaster))))
+# trænliste = indeksliste-valliste
+
+# print(dataset_sizes['real_Val'])
+# image_datasets["real_Val"] = torch.utils.data.Subset(realMaster, list(valliste))
+# image_datasets["real_Train"] = torch.utils.data.Subset(realMaster, list(trænliste))
+# print(len(image_datasets["real_Val"]))
+
+
+
+Ns = {"real_Train": int(0.8*len(realMaster)),
+      "real_Val": int(0.2*len(realMaster)),
+      "art_Train": artLen,
+      "art_Val": dataset_sizes["art_Val"]}
 
 samplers = {x:torch.utils.data.WeightedRandomSampler(sampleWeights[x],
-                                                                 Ns[x])
-            for x in ["realTrain", "realVal", "artTrain", "artVal"]}
+                                                                  Ns[x])
+            for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
 
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size,
                                               num_workers=0, sampler=samplers[x])                                             
-               for x in ["realTrain", "realVal", "artTrain", "artVal"]}
+               for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
                 
 
-class_names = image_datasets['realTrain'].classes
-print('Types of classes:',class_names)
+
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def imshow(inp, title=None):
-    """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
     mean = np.array([0.485, 0.456, 0.406])
     std = np.array([0.229, 0.224, 0.225])
@@ -106,9 +120,7 @@ def imshow(inp, title=None):
     plt.pause(0.001) # pause a bit so that plots are updated
 
 
-# for images, targets in dataloaders["artTrain"]:
-#     imshow(images[0])
-#     print(targets)
+
     
 
 def confusionMatrix(dataloader):
@@ -124,7 +136,7 @@ def confusionMatrix(dataloader):
             for i in range(len(preds)):
                 all_preds.append(preds[i].item())
                 all_labels.append(labels[i].item())
-    conf = confusion_matrix(all_labels,all_preds)
+    conf = confusion_matrix(all_labels,all_preds,labels=np.arange(len(class_names)))
     plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
     plt.colorbar()
     plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
@@ -134,20 +146,21 @@ def confusionMatrix(dataloader):
     j += 1
             
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
+def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=25):
 
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
 
     for epoch in range(num_epochs):
+        print('Fold {}/{}'.format(fold,K-1))
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
         # Each epoch has a training and validation phase
-        for phase in ["artTrain", "artVal", "realTrain", "realVal"]:
+        for phase in ['art_Train', 'art_Val', 'real_Train', 'real_Val']:
             batch_count = 1
             since = time.time()
-            if (phase == 'realTrain' or phase == "artTrain"):
+            if (phase == 'real_Train' or phase == "art_Train"):
                 model.train()  # Set model to training mode
             else:
                 model.eval()   # Set model to evaluate mode
@@ -157,21 +170,24 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
+                print(labels)
+                imshow(inputs[0])
                 inputs = inputs.to(device)
                 labels = labels.to(device)
-
+                
+                """
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
                 # forward
                 # track history if only in train
-                with torch.set_grad_enabled(phase == 'realTrain' or phase == "artTrain"):
+                with torch.set_grad_enabled(phase == 'real_Train' or phase == "art_Train"):
                     outputs = model(inputs)
                     _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels)
 
                     # backward + optimize only if in training phase
-                    if (phase == 'realTrain' or phase == "artTrain"):
+                    if (phase == 'real_Train' or phase == "art_Train"):
                         loss.backward()
                         optimizer.step()
 
@@ -182,7 +198,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                     print('Batch',batch_count,'completed succesfully')
                     print("sec pr. Batch: ", (time.time()-since)/(batch_count-1))
                 batch_count += 1
-            if (phase == 'realTrain' or phase == "artTrain"):
+            if (phase == 'real_Train' or phase == "art_Train"):
                 scheduler.step()
 
             epoch_loss = running_loss / Ns[phase]
@@ -191,17 +207,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
             
-            if (phase == "artVal" or phase == "realVal"):
+            if (phase == "art_Val" or phase == "real_Val"):
                 confusionMatrix(dataloaders[phase])
 
-            # deep copy the model
-            # if phase == 'realVal' and epoch_acc > best_acc:
-            #     best_acc = epoch_acc
-            #     best_model_wts = copy.deepcopy(model.state_dict())
-            if phase == "realVal":    
-                print('Saving model...')
-                torch.save(model.state_dict(),os.path.join(data_dir,"models",
-                           str(epoch)+"_"+str(round(epoch_acc.item(),3))+".pth"))
+           
 
         print()
 
@@ -212,6 +221,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
     # load best model weights
     model.load_state_dict(best_model_wts)
+    """
     return model
 
 def visualize_model(model, num_images=6):
@@ -267,11 +277,25 @@ optimizer_conv = optim.SGD(classifier.parameters(), lr=0.001, momentum=0.9)
 
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
+K = 5
 
 if __name__ == "__main__":
     print(classifier)
-    classifier = train_model(classifier, criterion, optimizer_conv,
-                             exp_lr_scheduler, num_epochs=1500)
+    
+    alindeks = set(np.arange(len(realMaster)))
+    brugtindeks = set()    
+    for fold in range(K):
+        valliste = set(random.sample(alindeks-brugtindeks,int(1/K*len(realMaster))))
+        trænliste = alindeks-valliste
+        brugtindeks.union(valliste)
+        image_datasets["real_Val"] = torch.utils.data.Subset(realMaster, list(valliste))
+        image_datasets["real_Train"] = torch.utils.data.Subset(realMaster, list(trænliste))
+        dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size,
+                                              num_workers=0, sampler=samplers[x])                                             
+               for x in ['art_Train', 'art_Val', 'real_Train', 'real_Val']}
+    
+        classifier = train_model(classifier, dataloaders, criterion, optimizer_conv,
+                                 exp_lr_scheduler, num_epochs=10)
 
 
 
