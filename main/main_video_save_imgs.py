@@ -12,14 +12,14 @@ import torch.nn as nn
 import cv2 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-videosti = '/Users/MI/Documents/SwimData/SwimCodes/temp/A.mp4'
+videosti = '../../../SwimData/SwimCodes/temp/A-H/H.mp4'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 
 #define classnames
-classNames = ["A","B","C","D","False"]
+classNames = ["A","B","C","D","E","F","G","H","False"]
 
 #Define the object detector model as objectDetector
 
@@ -83,15 +83,15 @@ with torch.no_grad():
                     detectedImage = cv2.rectangle(np.array(imagePIL),(int(box_points[0]),int(box_points[1])),
                                                   (int(box_points[2]),int(box_points[3])),color=(255,255,0),
                                                   thickness=5)
-                    plt.imshow(detectedImage)
-                    plt.show()
+                    # plt.imshow(detectedImage)
+                    # plt.show()
                     
                     # for u in range(len(detections['labels'])):
-                    plt.imshow(zoom)
-                    plt.show()
+                    # plt.imshow(zoom)
+                    # plt.show()
                     print('Scores of objectDetector:' , detections['scores'][i])
-                    if detections['scores'][i] >= 0.4:
-                        zoom.save('/Users/MI/Documents/SwimData/SwimCodes/temp/A/'+str(master_index)+'_'+str(i)+'.jpg')
+                    if detections['scores'][i] >= 0.0:
+                        zoom.save('../../../SwimData/SwimCodes/classification5/H/'+str(master_index)+'extra'+str(i)+'.jpg')
                     
                     master_index += 1
                     #zoom = Image.fromarray(zoom)
@@ -104,7 +104,7 @@ with torch.no_grad():
                     # print("I predict: ",classNames[preds],'with a confidence of:',detections['scores'])
                     
                 except ValueError:
-                    print("contains edge of image, wont work")
+                    print("tomt zoom")
             print("\n")
     
     
