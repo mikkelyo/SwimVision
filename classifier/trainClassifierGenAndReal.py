@@ -38,14 +38,14 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'artTrain': transforms.Compose([transforms.Resize((256,256)),
-                             GauBlur(0.2),
+                             GauBlur(0.8),
                              transforms.RandomRotation(180),
                              transforms.RandomHorizontalFlip(),
                              transforms.RandomPerspective(p=0.5),
                              transforms.ColorJitter(brightness=0.3),
-                             BackGround(1,"../../../SwimData/SwimCodes/classification/train/False"),
-                             GauBlur(0.2),
-                             transforms.Resize((35,35)),
+                             BackGround(1,"../../../SwimData/GeoCodes/classifier/realTrain/false"),
+                             GauBlur(0.8),
+                             transforms.Resize((int(abs(random.gauss(20,10)))+1)),
                              transforms.Resize((256,256)),
                              convert_to_rgb(),
                              transforms.ToTensor(),
@@ -59,9 +59,9 @@ data_transforms = {
         ])
 }
 batch_size = 8
-artLen = 1000
+artLen = 100 
 
-data_dir = "../../../SwimData/SwimCodes/classification5"
+data_dir = "../../../SwimData/GeoCodes/classifier"
 image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
@@ -108,9 +108,9 @@ def imshow(inp, title=None):
     plt.pause(0.001) # pause a bit so that plots are updated
 
    # Shows generated picture during training
-for images, targets in dataloaders["artTrain"]:
-    imshow(images[0])
-    print(targets)
+# for images, targets in dataloaders["artTrain"]:
+#     imshow(images[0])
+#     print(targets)
     
 
 def confusionMatrix(dataloader):
@@ -180,7 +180,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
-                if batch_count%50 ==0:
+                if batch_count%5 == 0:
                     print('Batch',batch_count,'completed succesfully')
                     print("sec pr. Batch: ", (time.time()-since)/(batch_count-1))
                 batch_count += 1

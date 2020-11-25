@@ -13,12 +13,12 @@ import os
 
 
 # Change folder
-os.chdir('/Users/MI/Documents/SwimData/SwimCodes/temp')
+os.chdir('/Users/MI/Downloads')
 
 files=[]
 for file in os.listdir():
-    if  '.mp4' in str(file)[-4:] or \
-        '.MP4' in str(file)[-4:]:
+    if  '.mov' in str(file)[-4:] or \
+        '.MOV' in str(file)[-4:]:
         files.append(str(file))
 
 

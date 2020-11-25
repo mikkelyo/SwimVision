@@ -5,7 +5,7 @@ import matplotlib
 import random
 import numpy as np
 #%%
-basedir = "../../../SwimData/SwimCodes/objectDetection/val"
+basedir = "../../../SwimData/GeoCodes/objectDetection/train"
 
 framelist = os.listdir(basedir+"/images")
 annotlist = os.listdir(basedir+"/annotations")
@@ -46,16 +46,16 @@ for i in range(len(annotlist)):
         print(ymax-ymin,ymax-ymin)
         # matplotlib.image.imsave("../../../SwimData/SwimCodes/classification/train/"+
         #                         klasse+"/"+klasse+str(i)+".jpg",zoom)
-        plt.imsave("../../../SwimData/SwimCodes/classification/val/"+
+        plt.imsave("../../../SwimData/GeoCodes/classifier/realTrain/"+
                                  klasse+"/"+klasse+str(i)+".jpg",zoom)
     except IndexError:
         print("ingen bounding box")
     
 #%%
 #Få nogle billeder ned i false
-
-n = 100
-billedliste = os.listdir("D:/swimcamD/1080/false")
+mappe = '/Users/MI/Documents/SwimData/GeoCodes/classifier/temp'
+n = 50
+billedliste = os.listdir(mappe)
 
 for i in range(n):
     bredde = int(np.random.normal(100,3))
@@ -64,7 +64,7 @@ for i in range(n):
     ymin = int(random.choice(np.arange(1080)))
     
     billed = random.choice(billedliste)
-    billed = plt.imread("D:/swimcamD/1080/false/"+billed)
+    billed = plt.imread('/Users/MI/Documents/SwimData/GeoCodes/classifier/temp'+"/"+billed)
     zoom = billed[ymin:ymin+højde,xmin:xmin+bredde]
-    matplotlib.image.imsave("D:/swimcamD2/SwimData/SwimCodes/classification/val/False/"+"false"+str(i+3900)+".jpg",zoom)
+    matplotlib.image.imsave("/Users/MI/Documents/SwimData/GeoCodes/classifier/realTrain/false/"+"false"+str(i+3900)+".jpg",zoom)
     
