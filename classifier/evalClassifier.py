@@ -8,6 +8,7 @@ import os
 import torch.nn as nn
 from sklearn.metrics import confusion_matrix
 from trainClassifierGenAndReal import confusionMatrix
+import seaborn as sns
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -139,7 +140,7 @@ with torch.no_grad():
 
 print(confusion_matrix_mikkel)
     
-
-            
+#%%
+sns.heatmap(confusion_matrix_mikkel)
 
         
