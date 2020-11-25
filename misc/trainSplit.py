@@ -23,7 +23,7 @@ for fil in flytteliste:
         # shutil.move("D:/swimcamD2/SwimData/SwimCodes/objectDetection/train/annotations/"+kernenavn+".xml",
         #              "D:/swimcamD2/SwimData/SwimCodes/objectDetection/val/annotations/"+kernenavn+".xml")
         shutil.move("../../../SwimData/GeoCodes/objectDetection/train/annotations/"+kernenavn+".xml",
-                     "../../../SwimData/SwimCodes/objectDetection/val/annotations/"+kernenavn+".xml")
+                     "../../../SwimData/GeoCodes/objectDetection/val/annotations/"+kernenavn+".xml")
     except FileNotFoundError:
         print("den annotering manglede. Jeg lader bare som ingenting. Fløjte fløjte")
          
