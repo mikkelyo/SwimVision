@@ -175,7 +175,7 @@ if __name__ == "__main__":
     
     tran = transforms.Compose([transforms.ToTensor()])
     
-    root = "../../../SwimData/SwimCodes/objectDetection"
+    root = "../../../SwimData/GeoCodes/objectDetection"
     
     train(model,device,root,tran)
     
