@@ -12,7 +12,7 @@ import torch.nn as nn
 import cv2 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-videosti = '/Users/MI/Documents/SwimData/SwimCodes/temp/xtraData/Dtwo.mp4'
+videosti = '/Users/MI/Documents/SwimData/SwimCodes/temp/A.mp4'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -90,8 +90,8 @@ with torch.no_grad():
                     plt.imshow(zoom)
                     plt.show()
                     print('Scores of objectDetector:' , detections['scores'][i])
-                    if detections['scores'][i] >= 0.9:
-                        zoom.save('/Users/MI/Documents/SwimData/SwimCodes/temp/xtraData/D/'+str(master_index)+'extra'+str(i)+'.jpg')
+                    if detections['scores'][i] >= 0.4:
+                        zoom.save('/Users/MI/Documents/SwimData/SwimCodes/temp/A/'+str(master_index)+'_'+str(i)+'.jpg')
                     
                     master_index += 1
                     #zoom = Image.fromarray(zoom)
@@ -104,7 +104,7 @@ with torch.no_grad():
                     # print("I predict: ",classNames[preds],'with a confidence of:',detections['scores'])
                     
                 except ValueError:
-                    print("tomt zoom")
+                    print("contains edge of image, wont work")
             print("\n")
     
     
