@@ -41,8 +41,8 @@ class_names = image_datasets['realTrain'].classes
 def visualize_eval(model, num_images=6):
     was_training = model.training
     model.eval()
-
-
+    true=0
+    false=0
 
     with torch.no_grad():
         for i, (inputs, labels) in enumerate(dataloaders['realVal']):
@@ -62,9 +62,18 @@ def visualize_eval(model, num_images=6):
                 ax.set_title('predicted: {}'.format(class_names[preds[j]])+
                              "\ntrue class: {}".format(class_names[labels[j]]))
                 imshow(inputs.cpu().data[j])
+                #testing
+
+                if class_names[preds[j]] == class_names[labels[j]]:    
+                    true += 1
+                if class_names[preds[j]] != class_names[labels[j]]:    
+                    false += 1
+    
             plt.show()
 
-                
+        print('total true:',true)
+        print('total false:',false)
+            
         model.train(mode=was_training)
         
 def imshow_norm(inp, title=None):
@@ -113,8 +122,23 @@ visualize_eval(classifier,num_images=8)
 #print(dataset_sizes["val"]/time_spent," fps")
 
 #-------Confusion matrix ----------
-confusionMatrix(dataloaders["realVal"])
+# confusionMatrix(dataloaders["realVal"])
             
+#%%
+nb_classes = 9
+
+confusion_matrix_mikkel = torch.zeros(nb_classes, nb_classes)
+with torch.no_grad():
+    for i, (inputs, classes) in enumerate(dataloaders['realVal']):
+        inputs = inputs.to(device)
+        classes = classes.to(device)
+        outputs = classifier(inputs)
+        _, preds = torch.max(outputs, 1)
+        for t, p in zip(classes.view(-1), preds.view(-1)):
+                confusion_matrix_mikkel[t.long(), p.long()] += 1
+
+print(confusion_matrix_mikkel)
+    
 
             
 

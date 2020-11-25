@@ -116,8 +116,8 @@ def imshow(inp, title=None):
 def confusionMatrix(dataloader):
     all_preds = []
     all_labels = []
-    j = 1
-    with torch.no_grad():
+    # j = 1
+    with torch.no_grad(): #to prevent cuda from overloading memory
         for inputs, labels in dataloader:
             inputs = inputs.to(device)
             labels = labels.to(device)
@@ -133,7 +133,7 @@ def confusionMatrix(dataloader):
     plt.yticks(np.arange(len(class_names)), class_names)
     plt.ylabel("Actual code")
     plt.show()
-    j += 1
+    # j += 1
             
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
