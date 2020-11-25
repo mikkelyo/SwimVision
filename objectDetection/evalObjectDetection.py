@@ -19,7 +19,7 @@ model = torchvision.models.detection.fasterrcnn_resnet50_fpn()
 num_classes = 2 
 in_features = model.roi_heads.box_predictor.cls_score.in_features
 model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-model.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/1_3.366.pth",map_location=device))
+model.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/6_2.887.pth",map_location=device))
 model.eval()
 model.to(device)
 
