@@ -108,8 +108,8 @@ classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier/mod
                                       map_location=device))
 classifier = classifier.to(device)
 
-# visualizes image and prediction
-visualize_eval(classifier,num_images=8)
+## visualizes image and prediction
+# visualize_eval(classifier,num_images=8)
 
 ## test inference time
 #starttime = time.time()
@@ -140,7 +140,18 @@ with torch.no_grad():
 
 print(confusion_matrix_mikkel)
     
-#%%
-sns.heatmap(confusion_matrix_mikkel)
 
-        
+sns.heatmap(confusion_matrix_mikkel,cmap='Blues', xticklabels = class_names , yticklabels = class_names) , cbar=True, annot=True)
+plt.xlabel('Predicted', fontsize=18)
+plt.ylabel('True', fontsize=16)
+plt.show()
+
+
+
+
+
+
+
+
+
+
