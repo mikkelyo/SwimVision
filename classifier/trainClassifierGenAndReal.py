@@ -107,10 +107,10 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001) # pause a bit so that plots are updated
 
-
-# for images, targets in dataloaders["artTrain"]:
-#     imshow(images[0])
-#     print(targets)
+   # Shows generated picture during training
+for images, targets in dataloaders["artTrain"]:
+    imshow(images[0])
+    print(targets)
     
 
 def confusionMatrix(dataloader):
