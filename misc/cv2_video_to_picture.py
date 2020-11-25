@@ -13,7 +13,7 @@ import os
 
 
 # Change folder
-os.chdir("../../../SwimData/Swimcodes/taggedVideos")
+os.chdir('/Users/MI/Documents/SwimData/SwimCodes/temp')
 
 files=[]
 for file in os.listdir():
@@ -37,7 +37,7 @@ for video in files:
         if success == False:
             pass
         else:
-            cv2.imwrite('../taggedPics/'+video[:3]+"_%d.jpg" % count, image)     # save frame as JPEG file
+            cv2.imwrite(str(video[:1])+"_%d.jpg" % count, image)     # save frame as JPEG file
         
         # elif cv2.waitKey(10) == 27:                     # exit if Escape is hit
         #     break

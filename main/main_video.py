@@ -18,9 +18,7 @@ videosti = '../../../SwimData/SwimCodes/temp/A.mp4'
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 
-#define classnames
-classNames = ["A","B","C","D","False"]
-
+# Object Detector
 #Define the object detector model as objectDetector
 
 objectDetector = models.detection.fasterrcnn_resnet50_fpn()
@@ -32,7 +30,13 @@ objectDetector.load_state_dict(torch.load("../../../SwimData/SwimCodes/objectDet
 objectDetector.eval()
 objectDetector.to(device)
 
-#Define the classifier
+
+# Define the classifier
+
+#define classnames
+classNames = ["A","B","C","D","False"]
+
+
 classifier = models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(classNames),bias=True)
 classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification4/models/2_0.9926739926739927.pth",
