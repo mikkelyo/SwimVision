@@ -139,7 +139,7 @@ def train(model,device,root,tran,batch_size=2,
                 totalLoss += loss.item()
                 
                  #print something every ___ batch
-                if i % 20 == 0:
+                if i % 2 == 0:
                     print("\nloss pr batch: ",totalLoss/(i-1))
                     nu = time.time()
                     print("sek pr. batch: ",(nu-start)/(i-1))
