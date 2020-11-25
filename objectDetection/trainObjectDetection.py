@@ -139,7 +139,7 @@ def train(model,device,root,tran,batch_size=2,
                 totalLoss += loss.item()
                 
                  #print something every ___ batch
-                if i % 2 == 0:
+                if i % 50 == 0:
                     print("\nloss pr batch: ",totalLoss/(i-1))
                     nu = time.time()
                     print("sek pr. batch: ",(nu-start)/(i-1))
@@ -171,6 +171,7 @@ if __name__ == "__main__":
     num_classes = 2 
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+    model.load_state_dict(torch.load("../../../SwimData/SwimCodes/objectDetection/models/RCNN_13nov.pth",map_location=device))
     model.to(device)
     
     tran = transforms.Compose([transforms.ToTensor()])

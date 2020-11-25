@@ -19,13 +19,13 @@ model = torchvision.models.detection.fasterrcnn_resnet50_fpn()
 num_classes = 2 
 in_features = model.roi_heads.box_predictor.cls_score.in_features
 model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-model.load_state_dict(torch.load("../../../SwimData/SwimCodes/objectDetection/models/RCNN_13nov.pth",map_location=device))
+model.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/1_3.366.pth",map_location=device))
 model.eval()
 model.to(device)
 
 tran = transforms.Compose([transforms.ToTensor()])
 
-dataset_validation = SwimSet("../../../SwimData/SwimCodes/objectDetection/val",tran)
+dataset_validation = SwimSet("../../../SwimData/GeoCodes/objectDetection/val",tran)
 dataloader_validation = torch.utils.data.DataLoader(
  dataset_validation, batch_size=2, shuffle=True, num_workers=0,
  collate_fn=mincollate)
