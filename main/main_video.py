@@ -12,7 +12,8 @@ import torch.nn as nn
 import cv2 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-videosti = '../../../SwimData/GeoCodes/temp/IMG_0442.mp4'
+# videosti = '../../../SwimData/GeoCodes/temp/IMG_0442.mp4'
+videosti = '/Users/MI/Downloads/IMG_0061.MOV'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -50,6 +51,8 @@ classtrans = transforms.Compose([ transforms.Resize((256,256)),
 
 objectDetectorTrans = transforms.Compose([transforms.ToTensor()])
 
+# Defining softmax layer to get a confidence value for the classification
+softmaxlayer = torch.nn.Softmax(dim=1)
 
 cap = cv2.VideoCapture(videosti)
 t0 = time.time()
@@ -60,6 +63,7 @@ with torch.no_grad():
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             # plt.imshow(frame)
             # plt.show()
+            
             imagePIL = Image.fromarray(frame)
             image = objectDetectorTrans(imagePIL)
             image_z = torch.zeros(1,3,image.shape[1],image.shape[2])
@@ -72,10 +76,11 @@ with torch.no_grad():
             t1 = time.time()
             print(t1-t0," sec")
             t0=t1
-            for detection in detections['boxes']:
-                box_points = detection.cpu().detach().numpy()
-                zoom = imagePIL.crop((box_points[0]-10, box_points[1]-10,
-                                      box_points[2]+10, box_points[3]+10))
+            for i in range(len(detections['boxes'])):
+            # for detection in detections['boxes']:
+                box_points = detections['boxes'][i].cpu().detach().numpy()
+                zoom = imagePIL.crop((box_points[0], box_points[1],
+                                      box_points[2], box_points[3]))
                 try:
                     detectedImage = cv2.rectangle(np.array(imagePIL),(int(box_points[0]),int(box_points[1])),
                                                   (int(box_points[2]),int(box_points[3])),color=(255,255,0),
@@ -93,7 +98,8 @@ with torch.no_grad():
                     nul = nul.to(device)
                     outputs = classifier(nul)
                     _, preds = torch.max(outputs, 1)
-                    print("I predict: ",classNames[preds],'with a confidence of:',detections['scores'].item())
+                    print('OBJECT DETECTOR: Object detected with a confidence of',detections['scores'][i])
+                    print("CLASSIFIER: I predict: ---",classNames[preds],'--- with a confidence of:',softmaxlayer(outputs)[0][preds])
                     
                 except ValueError:
                     print("zoom is including areas outside the image, this error hasnt been fixed yet")
