@@ -21,6 +21,7 @@ import cv2
 import random
 from PIL import Image
 from sklearn.metrics import confusion_matrix
+import seaborn as sns
 #%%
 # Data augmentation and normalization for training
 # Just normalization for validation
@@ -59,7 +60,7 @@ data_transforms = {
         ])
 }
 batch_size = 8
-artLen = 100 
+artLen = 200 
 
 data_dir = "../../../SwimData/GeoCodes/classifier"
 image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
@@ -114,26 +115,22 @@ def imshow(inp, title=None):
     
 
 def confusionMatrix(dataloader):
-    all_preds = []
-    all_labels = []
-    # j = 1
-    with torch.no_grad(): #to prevent cuda from overloading memory
-        for inputs, labels in dataloader:
+    nb_classes = len(class_names)
+
+    confusion_matrix = torch.zeros(nb_classes, nb_classes)
+    with torch.no_grad():
+        for i, (inputs, classes) in enumerate(dataloaders['realVal']):
             inputs = inputs.to(device)
-            labels = labels.to(device)
+            classes = classes.to(device)
             outputs = classifier(inputs)
             _, preds = torch.max(outputs, 1)
-            for i in range(len(preds)):
-                all_preds.append(preds[i].item())
-                all_labels.append(labels[i].item())
-    conf = confusion_matrix(all_labels,all_preds,labels=np.arange(len(class_names)))
-    plt.imshow(conf, interpolation="nearest", cmap=plt.cm.Blues)
-    plt.colorbar()
-    plt.xticks(np.arange(len(class_names)), class_names, rotation=45)
-    plt.yticks(np.arange(len(class_names)), class_names)
-    plt.ylabel("Actual code")
+            for t, p in zip(classes.view(-1), preds.view(-1)):
+                    confusion_matrix[t.long(), p.long()] += 1
+    
+    sns.heatmap(confusion_matrix,cmap='Blues', xticklabels = class_names , yticklabels = class_names , cbar=True, annot=True)
+    plt.xlabel('Predicted', fontsize=18)
+    plt.ylabel('True', fontsize=16)
     plt.show()
-    # j += 1
             
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
@@ -180,7 +177,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
-                if batch_count%5 == 0:
+                if batch_count%50 == 0:
                     print('Batch',batch_count,'completed succesfully')
                     print("sec pr. Batch: ", (time.time()-since)/(batch_count-1))
                 batch_count += 1

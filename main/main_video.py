@@ -12,7 +12,7 @@ import torch.nn as nn
 import cv2 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-videosti = '../../../SwimData/SwimCodes/temp/A.mp4'
+videosti = '../../../SwimData/GeoCodes/temp/IMG_0442.mp4'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -25,7 +25,7 @@ objectDetector = models.detection.fasterrcnn_resnet50_fpn()
 num_classes = 2 
 in_features = objectDetector.roi_heads.box_predictor.cls_score.in_features
 objectDetector.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-objectDetector.load_state_dict(torch.load("../../../SwimData/SwimCodes/objectDetection/models/RCNN_13nov.pth",
+objectDetector.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/RCNN_Nov25.pth",
                                           map_location=device))
 objectDetector.eval()
 objectDetector.to(device)
@@ -34,12 +34,12 @@ objectDetector.to(device)
 # Define the classifier
 
 #define classnames
-classNames = ["A","B","C","D","False"]
+classNames = ["A", "B", "C", "D", "E", "F", "G", "H", "False"]
 
 
 classifier = models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(classNames),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/SwimCodes/classification4/models/2_0.9926739926739927.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier/models/9_1.0.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 

@@ -104,12 +104,12 @@ def imshow(inp, title=None):
 #model = torch.load("../../classifier/Cmodels/3.pt")
 classifier = torchvision.models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier/models/0_0.811.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier/models/9_1.0.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 
 ## visualizes image and prediction
-# visualize_eval(classifier,num_images=8)
+visualize_eval(classifier,num_images=8)
 
 ## test inference time
 #starttime = time.time()
@@ -123,9 +123,11 @@ classifier = classifier.to(device)
 #print(dataset_sizes["val"]/time_spent," fps")
 
 #-------Confusion matrix ----------
-# confusionMatrix(dataloaders["realVal"])
+confusionMatrix(dataloaders["realVal"])
             
 #%%
+
+"""
 nb_classes = 9
 
 confusion_matrix_mikkel = torch.zeros(nb_classes, nb_classes)
@@ -146,7 +148,7 @@ plt.xlabel('Predicted', fontsize=18)
 plt.ylabel('True', fontsize=16)
 plt.show()
 
-
+"""
 
 
 
