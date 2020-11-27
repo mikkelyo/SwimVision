@@ -35,7 +35,7 @@ img.save(letter+"_transparent.png", "PNG")
 # =============================================================================
 
 # set letter (has to be valid)
-for letter in ['A','B','C','D','E','F','G','H']:
+for letter in ['rc0','bc0','gc0','rc1','bc1','gc1','rf0','gf0','bf0','rf1','gf1','bf1','rt0','bt0','gt0','rt1','bt1','gt1','rl0','bl0','gl0','rl1','bl1','gl1','rs0','bs0','gs0','rs1','bs1','gs1','false']:
     
     # set folder
     os.chdir('/Users/MI/Documents/SwimData/SwimCodes/classification5/artTrain/'+letter)
@@ -53,3 +53,9 @@ for letter in ['A','B','C','D','E','F','G','H']:
     
     img.putdata(newData)
     img.save(letter+"_transparent.png", "PNG")
+    
+    
+    
+    
+    
+    
