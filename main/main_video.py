@@ -13,7 +13,7 @@ import cv2
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
 # videosti = '../../../SwimData/GeoCodes/temp/IMG_0442.mp4'
-videosti = '/Users/MI/Downloads/IMG_0061.MOV'
+videosti = '/Users/MI/Downloads/IMG_0067.MOV'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -56,6 +56,8 @@ softmaxlayer = torch.nn.Softmax(dim=1)
 
 cap = cv2.VideoCapture(videosti)
 t0 = time.time()
+
+# torch.no_grad() is included to save memory on the computer - prevents torch from constantly monitoring the gradient during backpropagation
 with torch.no_grad():
     while(cap.isOpened()):
         ret, frame = cap.read()
