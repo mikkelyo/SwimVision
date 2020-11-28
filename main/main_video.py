@@ -9,11 +9,14 @@ from PIL import Image
 import random
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 import torch.nn as nn
-import cv2 
+import cv2
+os.chdir("../classifier")
+from trainClassifierGenAndReal import class_names
+os.chdir("../main") 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-# videosti = '../../../SwimData/GeoCodes/temp/IMG_0442.mp4'
-videosti = '/Users/MI/Downloads/IMG_0067.MOV'
+videosti = '../../../SwimData/GeoCodes/temp/IMG_0484.mp4'
+#videosti = '/Users/MI/Downloads/IMG_0067.MOV'
 
 #define the device
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -26,7 +29,7 @@ objectDetector = models.detection.fasterrcnn_resnet50_fpn()
 num_classes = 2 
 in_features = objectDetector.roi_heads.box_predictor.cls_score.in_features
 objectDetector.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-objectDetector.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/RCNN_Nov25.pth",
+objectDetector.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/64_2.642.pth",
                                           map_location=device))
 objectDetector.eval()
 objectDetector.to(device)
@@ -34,13 +37,13 @@ objectDetector.to(device)
 
 # Define the classifier
 
-#define classnames
-classNames = ["A", "B", "C", "D", "E", "F", "G", "H", "False"]
+#define class_names
+#class_names = ["A", "B", "C", "D", "E", "F", "G", "H", "False"]
 
 
 classifier = models.vgg19(pretrained=False,progress=False)
-classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(classNames),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier/models/9_1.0.pth",
+classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
+classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier4/models/14_0.532.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 
@@ -81,8 +84,8 @@ with torch.no_grad():
             for i in range(len(detections['boxes'])):
             # for detection in detections['boxes']:
                 box_points = detections['boxes'][i].cpu().detach().numpy()
-                zoom = imagePIL.crop((box_points[0], box_points[1],
-                                      box_points[2], box_points[3]))
+                zoom = imagePIL.crop((box_points[0]-20, box_points[1]-20,
+                                      box_points[2]+20, box_points[3]+20))
                 try:
                     detectedImage = cv2.rectangle(np.array(imagePIL),(int(box_points[0]),int(box_points[1])),
                                                   (int(box_points[2]),int(box_points[3])),color=(255,255,0),
@@ -101,10 +104,12 @@ with torch.no_grad():
                     outputs = classifier(nul)
                     _, preds = torch.max(outputs, 1)
                     print('OBJECT DETECTOR: Object detected with a confidence of',detections['scores'][i])
-                    print("CLASSIFIER: I predict: ---",classNames[preds],'--- with a confidence of:',softmaxlayer(outputs)[0][preds])
+                    print("CLASSIFIER: I predict: ---",class_names[preds],'--- with a confidence of:',softmaxlayer(outputs)[0][preds])
                     
                 except ValueError:
                     print("zoom is including areas outside the image, this error hasnt been fixed yet")
             print("\n")
+        else:
+            break
     
     

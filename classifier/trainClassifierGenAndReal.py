@@ -39,14 +39,14 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'artTrain': transforms.Compose([transforms.Resize((256,256)),
-                             GauBlur(0.8),
+                             GauBlur(0.1),
                              transforms.RandomRotation(180),
                              transforms.RandomHorizontalFlip(),
                              transforms.RandomPerspective(p=0.5),
                              transforms.ColorJitter(brightness=0.3),
                              BackGround(1,"../../../SwimData/GeoCodes/classifier/realTrain/false"),
-                             GauBlur(0.8),
-                             transforms.Resize((int(abs(random.gauss(20,10)))+1)),
+                             GauBlur(0.1),
+                             transforms.Resize((int(abs(random.gauss(100,10)))+1)),
                              transforms.Resize((256,256)),
                              convert_to_rgb(),
                              transforms.ToTensor(),
@@ -60,9 +60,9 @@ data_transforms = {
         ])
 }
 batch_size = 8
-artLen = 200 
+artLen = 3000 
 
-data_dir = "../../../SwimData/GeoCodes/classifier"
+data_dir = "../../../SwimData/GeoCodes/classifier4"
 image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['realTrain', 'realVal', "artTrain", "artVal"]}
@@ -111,7 +111,7 @@ def imshow(inp, title=None):
    # Shows generated picture during training
 # for images, targets in dataloaders["artTrain"]:
 #     imshow(images[0])
-#     print(targets)
+#     print(class_names[targets[0]])
     
 
 def confusionMatrix(dataloader):
@@ -119,7 +119,7 @@ def confusionMatrix(dataloader):
 
     confusion_matrix = torch.zeros(nb_classes, nb_classes)
     with torch.no_grad():
-        for i, (inputs, classes) in enumerate(dataloaders['realVal']):
+        for i, (inputs, classes) in enumerate(dataloader):
             inputs = inputs.to(device)
             classes = classes.to(device)
             outputs = classifier(inputs)
@@ -127,7 +127,7 @@ def confusionMatrix(dataloader):
             for t, p in zip(classes.view(-1), preds.view(-1)):
                     confusion_matrix[t.long(), p.long()] += 1
     
-    sns.heatmap(confusion_matrix,cmap='Blues', xticklabels = class_names , yticklabels = class_names , cbar=True, annot=True)
+    sns.heatmap(confusion_matrix,cmap='Blues', xticklabels = class_names , yticklabels = class_names , cbar=True, annot=False)
     plt.xlabel('Predicted', fontsize=18)
     plt.ylabel('True', fontsize=16)
     plt.show()
