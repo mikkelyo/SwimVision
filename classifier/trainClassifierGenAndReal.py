@@ -60,7 +60,7 @@ data_transforms = {
         ])
 }
 batch_size = 8
-artLen = 3000 
+artLen = 1500 
 
 data_dir = "../../../SwimData/GeoCodes/classifier4"
 image_datasets = {x: ImageFolder(os.path.join(data_dir, x),
