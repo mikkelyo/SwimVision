@@ -54,34 +54,35 @@ for images,targets in dataloader_validation:
                 print(output[i],"\n")
                 
                 #loop all detections
-                for j in range(len(output[i]["boxes"])):
-                    bbpred = output[i]["boxes"][j]
-                    bbgt = targets[i]["boxes"][j]
-                    xA = max(bbpred[0].item(), bbgt[0].item())
-                    yA = max(bbpred[1].item(), bbgt[1].item())
-                    xB = min(bbpred[2].item(), bbgt[2].item())
-                    yB = min(bbpred[3].item(), bbgt[3].item())
-                    
-                    interArea = (xB - xA) * (yB - yA)
-                    
-                    bbpredArea = (bbpred[2].item() - bbpred[0].item()) * (bbpred[3].item() - bbpred[1].item())
-                    bbgtArea = (bbgt[2].item() - bbgt[0].item()) * (bbgt[3].item() - bbgt[1].item())
-                    
-                    iou = interArea / float(bbpredArea + bbgtArea - interArea)
-                    
-                    if iou >= 0.5:
-                        TP += 1
-                    if iou < 0.5:
-                        FP += 1
-                    if iou:
-                        pass
-                    
-                    
-                    
-                    
+                for j in range(len(targets[i]["boxes"])):
+                    if j >= len(output[i]["boxes"]):
+                        FN += 1
+                    else:
+                        bbpred = output[i]["boxes"][j]
+                        bbgt = targets[i]["boxes"][j]
+                        xA = max(bbpred[0].item(), bbgt[0].item())
+                        yA = max(bbpred[1].item(), bbgt[1].item())
+                        xB = min(bbpred[2].item(), bbgt[2].item())
+                        yB = min(bbpred[3].item(), bbgt[3].item())
+                        
+                        interArea = (xB - xA) * (yB - yA)
+                        
+                        bbpredArea = (bbpred[2].item() - bbpred[0].item()) * (bbpred[3].item() - bbpred[1].item())
+                        bbgtArea = (bbgt[2].item() - bbgt[0].item()) * (bbgt[3].item() - bbgt[1].item())
+                        
+                        iou = interArea / float(bbpredArea + bbgtArea - interArea)
+                        
+                        if iou >= 0.5:
+                            TP += 1
+                        if iou < 0.5:
+                            FP += 1
+                        
             
             """The underneath can be commented in if one wishes to test inference speed """
             # nu = time.time()
             # print((2*batch_count)/(nu-start))
             # batch_count += 1
             
+Precision = TP/(TP+FP)             
+Recall = TP/(TP+FN)
+
