@@ -59,8 +59,8 @@ for images,targets in dataloader_validation:
                     
                     interArea = (xB - xA) * (yB - yA)
                     
-                    bbpredArea = (bbpred[2] - bbpred[0]) * (bbpred[3] - bbpred[1])
-                    bbgtArea = (bbgt[2] - bbgt[0]) * (bbgt[3] - bbgt[1])
+                    bbpredArea = (bbpred[2].item() - bbpred[0].item()) * (bbpred[3].item() - bbpred[1].item())
+                    bbgtArea = (bbgt[2].item() - bbgt[0].item()) * (bbgt[3].item() - bbgt[1].item())
                     
                     iou = interArea / float(bbpredArea + bbgtArea - interArea)
                     
