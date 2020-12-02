@@ -19,7 +19,7 @@ model = torchvision.models.detection.fasterrcnn_resnet50_fpn()
 num_classes = 2 
 in_features = model.roi_heads.box_predictor.cls_score.in_features
 model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-model.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/6_2.887.pth",map_location=device))
+model.load_state_dict(torch.load("../../../SwimData/GeoCodes/objectDetection/models/64_2.642.pth",map_location=device))
 model.eval()
 model.to(device)
 
@@ -33,6 +33,7 @@ dataloader_validation = torch.utils.data.DataLoader(
 start = time.time()
 batch_count = 1
 for images,targets in dataloader_validation:
+    print(targets)
     with torch.no_grad():
         if images != None:
             output = model(images)
@@ -46,6 +47,27 @@ for images,targets in dataloader_validation:
                 except IndexError:
                     plt.show()
                 print(output[i],"\n")
+                
+                #loop all detections
+                for j in range(len(output[i]["boxes"])):
+                    bbpred = output[i]["boxes"][j]
+                    bbgt = targets[i]["boxes"][j]
+                    xA = max(bbpred[0].item(), bbgt[0].item())
+                    yA = max(bbpred[1].item(), bbgt[1].item())
+                    xB = min(bbpred[2].item(), bbgt[2].item())
+                    yB = min(bbpred[3].item(), bbgt[3].item())
+                    
+                    interArea = (xB - xA) * (yB - yA)
+                    
+                    bbpredArea = (bbpred[2] - bbpred[0]) * (bbpred[3] - bbpred[1])
+                    bbgtArea = (bbgt[2] - bbgt[0]) * (bbgt[3] - bbgt[1])
+                    
+                    iou = interArea / float(bbpredArea + bbgtArea - interArea)
+                    
+                    
+                    
+                    
+                    
             
             """The underneath can be commented in if one wishes to test inference speed """
             # nu = time.time()
