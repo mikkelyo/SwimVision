@@ -27,7 +27,7 @@ data_transforms = {
 }
 
 
-data_dir = "../../../SwimData/GeoCodes/classifier"
+data_dir = "../../../SwimData/GeoCodes/classifier4"
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['realTrain', 'realVal']}
@@ -104,7 +104,7 @@ def imshow(inp, title=None):
 #model = torch.load("../../classifier/Cmodels/3.pt")
 classifier = torchvision.models.vgg19(pretrained=False,progress=False)
 classifier.classifier[6] = nn.Linear(in_features=4096,out_features=len(class_names),bias=True)
-classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier/models/9_1.0.pth",
+classifier.load_state_dict(torch.load("../../../SwimData/GeoCodes/classifier4/models/1_1.0.pth",
                                       map_location=device))
 classifier = classifier.to(device)
 
