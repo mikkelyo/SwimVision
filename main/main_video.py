@@ -15,7 +15,7 @@ from trainClassifierGenAndReal import class_names
 os.chdir("../main") 
 
 # videosti = "C:/Users/elleh/Downloads/IMG_0412.mp4"
-videosti = '../../../SwimData/GeoCodes/temp/IMG_0484.mp4'
+videosti = '../../../SwimData/GeoCodes/temp/IMG_0063.MOV'
 #videosti = '/Users/MI/Downloads/IMG_0067.MOV'
 
 #define the device

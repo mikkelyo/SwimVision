@@ -107,11 +107,6 @@ def imshow(inp, title=None):
     if title is not None:
         plt.title(title)
     plt.pause(0.001) # pause a bit so that plots are updated
-
-   # Shows generated picture during training
-for images, targets in dataloaders["artTrain"]:
-    imshow(images[0])
-    print(class_names[targets[0]])
     
 
 def confusionMatrix(dataloader):
@@ -269,8 +264,16 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
 
 if __name__ == "__main__":
     print(classifier)
+
+    # Shows generated picture during training
+    for images, targets in dataloaders["artTrain"]:
+        imshow(images[0])
+        print(class_names[targets[0]])
+
+    # Trains classifier
     classifier = train_model(classifier, criterion, optimizer_conv,
                              exp_lr_scheduler, num_epochs=1500)
+    
 
 
 
