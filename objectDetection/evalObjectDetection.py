@@ -32,8 +32,13 @@ dataloader_validation = torch.utils.data.DataLoader(
 
 start = time.time()
 batch_count = 1
+
+# Defining true positives etc for calculation of mAP
+TP = 0
+FP = 0
+FN = 0
+
 for images,targets in dataloader_validation:
-    print(targets)
     with torch.no_grad():
         if images != None:
             output = model(images)
@@ -64,6 +69,12 @@ for images,targets in dataloader_validation:
                     
                     iou = interArea / float(bbpredArea + bbgtArea - interArea)
                     
+                    if iou >= 0.5:
+                        TP += 1
+                    if iou < 0.5:
+                        FP += 1
+                    if iou:
+                        pass
                     
                     
                     
